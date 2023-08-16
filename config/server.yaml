@@ -1,0 +1,13 @@
+environment:
+debug: false
+api:
+  addr:
+  jwt_key:
+db:
+  addr:
+  user:
+  password:
+  database:
+redis:
+  addr:
+  password:
