@@ -57,16 +57,23 @@ func Build(router *gin.Engine) (release func()) {
 	userHubService := userservice.NewHubService(userListService, userReadService, userService)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
+	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountUseCase(redisClient, userHubService))
 	v1UserHandler := v1.NewUserHandler(userHubService)
 
 	router.GET("/health", v1DefaultHandler.Health)
 
 	router.Use(gotraceutil.GinMiddleware())
 
-	router.GET("/api/v1/user/list", v1UserHandler.ListUser)
-	router.GET("/api/v1/user/search", v1UserHandler.SearchUser)
-	router.GET("/api/v1/user", v1UserHandler.GetUser)
-	router.POST("/api/v1/user", v1UserHandler.CreateUser)
+	router.POST("/api/v1/login", v1AccountHandler.Login)
+	router.POST("/api/v1/token", v1AccountHandler.CreateToken)
+
+	v1AuthGroup := router.Group("", v1AccountHandler.AuthMiddleware)
+	{
+		v1AuthGroup.GET("/api/v1/user/list", v1UserHandler.ListUser)
+		v1AuthGroup.GET("/api/v1/user/search", v1UserHandler.SearchUser)
+		v1AuthGroup.GET("/api/v1/user", v1UserHandler.GetUser)
+		v1AuthGroup.POST("/api/v1/user", v1UserHandler.CreateUser)
+	}
 
 	return
 }

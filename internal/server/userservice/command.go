@@ -20,4 +20,10 @@ type GetUserCommand struct {
 
 type CreateUserCommand struct {
 	Username string
+	Password string
+}
+
+type ValidatePasswordCommand struct {
+	Username string
+	Password string
 }

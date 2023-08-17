@@ -12,6 +12,7 @@ type User struct {
 	UpdateTime time.Time      `gorm:"column:update_time;type:datetime;not null;autoUpdateTime;" json:"-"`
 	DeleteTime gorm.DeletedAt `gorm:"column:delete_time;type:datetime;default:null;index:idx_delete_time;" json:"-"`
 	Username   string         `gorm:"column:username;type:varchar(32);not null;index:idx_username,unique;" json:"-"`
+	Password   string         `gorm:"column:password;type:varchar(100);not null;" json:"-"`
 }
 
 func (*User) TableName() string {

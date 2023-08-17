@@ -42,3 +42,8 @@ func (handler *BaseHandler) buildResponseBody(c *gin.Context, data interface{}, 
 
 	return body
 }
+
+func (handler *BaseHandler) GetUserClaims(c *gin.Context) *UserJwtClaims {
+	user, _ := c.Get("user_claims")
+	return user.(*UserJwtClaims)
+}

@@ -18,5 +18,13 @@ var zhCn = map[gocode.Code]string{
 	servercode.InvalidRequest:      "请求错误",
 	servercode.InternalServerError: "服务端错误",
 
+	servercode.LoginPasswordWrong:    "密码错误",
+	servercode.LoginFailedReachLimit: "登录失败超过5次，请于5分钟后重试",
+
+	servercode.AuthorizeInvalidTicket: "ticket已失效，请重新登录",
+	servercode.AuthorizeInvalidToken:  "token已失效，请重新登录",
+	servercode.AuthorizeFailed:        "认证失败，请重新登录",
+
 	servercode.UserAlreadyExists: "用户已存在",
+	servercode.UserNotFound:      "用户不存在",
 }

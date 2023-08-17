@@ -205,6 +205,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 
 type CreateUserRequest struct {
 	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type CreateUserResponse struct {
@@ -229,6 +230,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 
 	user, err := handler.userHubService.CreateUser(ctx, userservice.CreateUserCommand{
 		Username: req.Username,
+		Password: req.Password,
 	})
 	if err != nil {
 		if errors.Is(err, servercode.InternalServerError) {

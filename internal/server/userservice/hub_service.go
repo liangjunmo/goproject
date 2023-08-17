@@ -41,3 +41,7 @@ func (service *hubService) GetUser(ctx context.Context, cmd GetUserCommand) (Use
 func (service *hubService) CreateUser(ctx context.Context, cmd CreateUserCommand) (User, error) {
 	return service.userService.CreateUser(ctx, cmd)
 }
+
+func (service *hubService) ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error {
+	return service.userService.ValidatePassword(ctx, cmd)
+}

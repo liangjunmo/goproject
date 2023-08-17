@@ -64,7 +64,7 @@ func (service *readService) GetUser(ctx context.Context, cmd GetUserCommand) (Us
 	}
 
 	if user.Id == 0 {
-		return User{}, servercode.NotFound
+		return User{}, servercode.UserNotFound
 	}
 
 	return user, nil
