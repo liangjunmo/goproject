@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: goproject
+  name: goproject
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - test.goproject.com
+      secretName: goproject-tls
+  rules:
+    - host: test.goproject.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: goproject-nginx
+                port:
+                  number: 80

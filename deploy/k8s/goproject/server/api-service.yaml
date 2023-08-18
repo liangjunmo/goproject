@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: goproject
+  name: goproject-server-api
+spec:
+  selector:
+    app: goproject-server-api
+  ports:
+    - port: 8000
+      targetPort: 8000

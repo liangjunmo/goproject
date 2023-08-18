@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  api:
+    container_name: goproject-dev-server-api
+    image: goproject-server
+    restart: on-failure
+    networks:
+      - goproject-dev-middleware
+    ports:
+      - "10020:8000"
+    environment:
+      - GOPROJECT_SERVER_CONFIG_FILE=/etc/goproject/server.yaml
+    command: [goproject-server, api]
+  internal-api:
+    container_name: goproject-dev-server-internal-api
+    image: goproject-server
+    restart: on-failure
+    networks:
+      - goproject-dev-middleware
+    ports:
+      - "10021:8000"
+    environment:
+      - GOPROJECT_SERVER_CONFIG_FILE=/etc/goproject/server.yaml
+    command: [goproject-server, internal-api]
+  worker1:
+    container_name: goproject-dev-server-worker1
+    image: goproject-server
+    restart: on-failure
+    networks:
+      - goproject-dev-middleware
+    environment:
+      - GOPROJECT_SERVER_CONFIG_FILE=/etc/goproject/server.yaml
+    command: [goproject-server, worker1]
+  worker2:
+    container_name: goproject-dev-server-worker2
+    image: goproject-server
+    restart: on-failure
+    networks:
+      - goproject-dev-middleware
+    environment:
+      - GOPROJECT_SERVER_CONFIG_FILE=/etc/goproject/server.yaml
+    command: [goproject-server, worker2]
+  worker3:
+    container_name: goproject-dev-server-worker3
+    image: goproject-server
+    restart: on-failure
+    networks:
+      - goproject-dev-middleware
+    environment:
+      - GOPROJECT_SERVER_CONFIG_FILE=/etc/goproject/server.yaml
+    command: [goproject-server, worker3]
+networks:
+  goproject-dev-middleware:
+    external: true

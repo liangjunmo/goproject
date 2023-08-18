@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: middleware
+  name: mysql
+  labels:
+    app: mysql
+spec:
+  nodeSelector:
+    middleware: "true"
+  restartPolicy: Always
+  containers:
+    - name: mysql
+      image: mysql:5.7.41-debian
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 3306
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+      livenessProbe:
+        exec:
+          command: [mysqladmin, -uroot, "-p${MYSQL_ROOT_PASSWORD}", ping]
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 2
+        successThreshold: 1
+        failureThreshold: 3
+      resources:
+        limits:
+          cpu: 4
+          memory: 8Gi
+        requests:
+          cpu: 250m
+          memory: 512Mi
+      volumeMounts:
+        - name: mysql-config
+          mountPath: /etc/mysql/conf.d/my.cnf
+          subPath: my.cnf
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: localtime
+          mountPath: /etc/localtime
+          readOnly: true
+  volumes:
+    - name: mysql-config
+      configMap:
+        name: mysql
+    - name: mysql-data
+      hostPath:
+        path: /data/mysql
+        type: Directory
+    - name: localtime
+      hostPath:
+        path: /etc/localtime
+        type: File
