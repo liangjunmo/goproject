@@ -9,8 +9,8 @@ import (
 	"github.com/liangjunmo/gotraceutil"
 
 	"github.com/liangjunmo/goproject/internal/app/server"
-	v1 "github.com/liangjunmo/goproject/internal/app/server/serverapi/v1"
 	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
+	v1 "github.com/liangjunmo/goproject/internal/server/serverapi/v1"
 	"github.com/liangjunmo/goproject/internal/server/userservice"
 )
 
