@@ -23,11 +23,6 @@ func (handler *BaseHandler) buildResponseBody(c *gin.Context, data interface{}, 
 		data = map[string]interface{}{}
 	}
 
-	lang := c.GetHeader("Accept-Language")
-	if _, ok := i18n[lang]; !ok {
-		lang = "zh_CN"
-	}
-
 	code := gocode.Parse(err)
 	if code == gocode.SuccessCode {
 		code = servercode.OK
@@ -38,7 +33,7 @@ func (handler *BaseHandler) buildResponseBody(c *gin.Context, data interface{}, 
 	body := gin.H{
 		"data": data,
 		"code": code,
-		"msg":  i18n[lang][code],
+		"msg":  servercode.Translate(code, servercode.Language(c.GetHeader("Accept-Language"))),
 	}
 
 	if serverconfig.Config.Debug {
