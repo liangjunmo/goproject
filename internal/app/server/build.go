@@ -55,6 +55,8 @@ func BuildConfig(configFile string) error {
 func BuildTrace() error {
 	gotraceutil.SetTraceIdGenerator(gotraceutil.DefaultTraceIdGenerator)
 
+	gotraceutil.SetTraceIdKey(serverconfig.TraceIdKey)
+
 	return nil
 }
 

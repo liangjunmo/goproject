@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gocode"
 
+	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 	"github.com/liangjunmo/goproject/internal/server/servercode"
 )
 
@@ -38,6 +39,15 @@ func (handler *BaseHandler) buildResponseBody(c *gin.Context, data interface{}, 
 		"data": data,
 		"code": code,
 		"msg":  i18n[lang][code],
+	}
+
+	if serverconfig.Config.Debug {
+		body["error"] = nil
+		if err != nil {
+			body["error"] = err.Error()
+		}
+
+		body["request_id"] = c.Request.Context().Value(serverconfig.TraceIdKey)
 	}
 
 	return body

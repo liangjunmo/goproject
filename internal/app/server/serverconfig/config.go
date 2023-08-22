@@ -5,3 +5,7 @@ var (
 
 	ProjectDir string
 )
+
+const (
+	TraceIdKey string = "TraceId"
+)
