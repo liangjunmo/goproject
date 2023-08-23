@@ -211,6 +211,8 @@ github.com/liangjunmo/gocode v0.0.0-20230809024612-949d8ec656cb h1:wwWogHjR4Gc7C
 github.com/liangjunmo/gocode v0.0.0-20230809024612-949d8ec656cb/go.mod h1:sKKIXfnQ3dDgjYmcgIL8ZlYhKAJBE+BWRs3hIFLW32Y=
 github.com/liangjunmo/gotraceutil v0.0.0-20230814071507-913979aeff43 h1:KYGxnCWQr8FxJiNdXikVgvKkmXGDZ+QLA8z2/R8g7kE=
 github.com/liangjunmo/gotraceutil v0.0.0-20230814071507-913979aeff43/go.mod h1:BamvbotI+p1svgJGXEGh3YDSq5SZJaWyCL6ejBwTfDA=
+github.com/liangjunmo/gotraceutil v0.0.0-20230823114337-0f171e9c6323 h1:2XuRhs41Cz3MaifX56Qys7Eal2SJODvgvipiYAGxq9I=
+github.com/liangjunmo/gotraceutil v0.0.0-20230823114337-0f171e9c6323/go.mod h1:BamvbotI+p1svgJGXEGh3YDSq5SZJaWyCL6ejBwTfDA=
 github.com/liangjunmo/logrushook v0.0.0-20230823113303-1be01fe01a05 h1:HU/x/TBm9WOAIQXpjXoAFytnmQV3NZtCMvd0eoV+7Gc=
 github.com/liangjunmo/logrushook v0.0.0-20230823113303-1be01fe01a05/go.mod h1:3f28BnKT6PtdrlSeGNDJqmis+93l0E/AGDv+Tsh+jDc=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
