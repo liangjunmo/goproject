@@ -80,7 +80,12 @@ func BuildLog() error {
 		),
 	)
 
-	logrus.AddHook(logrushook.NewTransErrorToWarningLogrusHook([]gocode.Code{servercode.InternalServerError}))
+	logrus.AddHook(
+		logrushook.NewTransErrorToWarningLogrusHook(
+			[]gocode.Code{servercode.InternalServerError},
+			false,
+		),
+	)
 
 	return nil
 }
