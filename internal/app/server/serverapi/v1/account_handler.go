@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/liangjunmo/goproject/internal/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 )
 
 type AccountHandler struct {

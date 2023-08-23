@@ -7,10 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
-	"github.com/liangjunmo/goproject/internal/server/servercode"
-	"github.com/liangjunmo/goproject/internal/server/service/userservice"
 )
 
 type UserHandler struct {

@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 )
 
 type ReadService interface {

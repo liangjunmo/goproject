@@ -6,8 +6,8 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
-	"github.com/liangjunmo/goproject/internal/server/servercode"
 )
 
 type ListService interface {

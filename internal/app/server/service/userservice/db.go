@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 )
 
 func DbGetUserByUid(ctx context.Context, db *gorm.DB, uid uint32) (User, bool, error) {

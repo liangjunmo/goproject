@@ -7,8 +7,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/rediskey"
-	"github.com/liangjunmo/goproject/internal/server/servercode"
 )
 
 type UserService interface {

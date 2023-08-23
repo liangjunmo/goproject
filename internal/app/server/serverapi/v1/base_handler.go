@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gocode"
 
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
-	"github.com/liangjunmo/goproject/internal/server/servercode"
 )
 
 type BaseHandler struct{}

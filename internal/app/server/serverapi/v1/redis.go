@@ -9,8 +9,8 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cast"
 
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/rediskey"
-	"github.com/liangjunmo/goproject/internal/server/servercode"
 )
 
 func RedisGetLoginFailedCount(ctx context.Context, redisClient *redis.Client, username string) (uint32, error) {

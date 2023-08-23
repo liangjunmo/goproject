@@ -10,9 +10,9 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/redis/go-redis/v9"
 
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
-	"github.com/liangjunmo/goproject/internal/server/servercode"
-	"github.com/liangjunmo/goproject/internal/server/service/userservice"
+	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 )
 
 type AccountUseCase struct {
