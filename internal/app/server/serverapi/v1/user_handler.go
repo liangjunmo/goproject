@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -50,7 +49,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.Error(err)
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -59,12 +58,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 		PaginationRequest: req.Request,
 	})
 	if err != nil {
-		if errors.Is(err, servercode.InternalServerError) {
-			l.Error(err)
-		} else {
-			l.Warn(err)
-		}
-
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -114,7 +108,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.Error(err)
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -124,12 +118,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 		Usernames: req.Usernames,
 	})
 	if err != nil {
-		if errors.Is(err, servercode.InternalServerError) {
-			l.Error(err)
-		} else {
-			l.Warn(err)
-		}
-
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -174,7 +163,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.Error(err)
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -184,12 +173,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 		Username: req.Username,
 	})
 	if err != nil {
-		if errors.Is(err, servercode.InternalServerError) {
-			l.Error(err)
-		} else {
-			l.Warn(err)
-		}
-
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -223,7 +207,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.Error(err)
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -233,12 +217,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		Password: req.Password,
 	})
 	if err != nil {
-		if errors.Is(err, servercode.InternalServerError) {
-			l.Error(err)
-		} else {
-			l.Warn(err)
-		}
-
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}

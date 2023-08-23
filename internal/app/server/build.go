@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/liangjunmo/gocode"
 	"github.com/liangjunmo/gotraceutil"
 	"github.com/liangjunmo/logrushook"
 	"github.com/redis/go-redis/v9"
@@ -16,6 +17,7 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
+	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 	"github.com/liangjunmo/goproject/internal/pkg/dbutil"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
@@ -77,6 +79,8 @@ func BuildLog() error {
 			},
 		),
 	)
+
+	logrus.AddHook(logrushook.NewTransErrorToWarningLogrusHook([]gocode.Code{servercode.InternalServerError}))
 
 	return nil
 }

@@ -8,7 +8,7 @@ require (
 	github.com/go-redsync/redsync/v4 v4.8.1
 	github.com/liangjunmo/gocode v0.0.0-20230809024612-949d8ec656cb
 	github.com/liangjunmo/gotraceutil v0.0.0-20230814071507-913979aeff43
-	github.com/liangjunmo/logrushook v0.0.0-20230814021544-76cbbd81dbaf
+	github.com/liangjunmo/logrushook v0.0.0-20230823113303-1be01fe01a05
 	github.com/redis/go-redis/v9 v9.0.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cast v1.5.0

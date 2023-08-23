@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -42,19 +41,14 @@ func (handler *AccountHandler) Login(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.Error(err)
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
 
 	resp, err = handler.accountUseCase.Login(ctx, req)
 	if err != nil {
-		if errors.Is(err, servercode.InternalServerError) {
-			l.Error(err)
-		} else {
-			l.Warn(err)
-		}
-
+		l.WithError(err).Error(err)
 		handler.Response(c, resp, err)
 		return
 	}
@@ -81,19 +75,14 @@ func (handler *AccountHandler) CreateToken(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.Error(err)
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
 
 	resp, err = handler.accountUseCase.CreateToken(ctx, req)
 	if err != nil {
-		if errors.Is(err, servercode.InternalServerError) {
-			l.Error(err)
-		} else {
-			l.Warn(err)
-		}
-
+		l.WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -107,12 +96,7 @@ func (handler *AccountHandler) AuthMiddleware(c *gin.Context) {
 
 	claims, err := handler.accountUseCase.Auth(ctx, c.GetHeader("Authorization"))
 	if err != nil {
-		if errors.Is(err, servercode.InternalServerError) {
-			l.Error(err)
-		} else {
-			l.Warn(err)
-		}
-
+		l.WithError(err).Error(err)
 		c.Abort()
 		handler.Response(c, nil, err)
 		return
