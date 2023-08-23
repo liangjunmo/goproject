@@ -11,7 +11,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/app/server"
 	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 	v1 "github.com/liangjunmo/goproject/internal/server/serverapi/v1"
-	"github.com/liangjunmo/goproject/internal/server/userservice"
+	"github.com/liangjunmo/goproject/internal/server/service/userservice"
 )
 
 func Build(router *gin.Engine) (release func()) {

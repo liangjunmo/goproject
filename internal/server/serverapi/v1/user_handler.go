@@ -10,7 +10,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
 	"github.com/liangjunmo/goproject/internal/server/servercode"
-	"github.com/liangjunmo/goproject/internal/server/userservice"
+	"github.com/liangjunmo/goproject/internal/server/service/userservice"
 )
 
 type UserHandler struct {

@@ -12,7 +12,7 @@ import (
 
 	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 	"github.com/liangjunmo/goproject/internal/server/servercode"
-	"github.com/liangjunmo/goproject/internal/server/userservice"
+	"github.com/liangjunmo/goproject/internal/server/service/userservice"
 )
 
 type AccountUseCase struct {
