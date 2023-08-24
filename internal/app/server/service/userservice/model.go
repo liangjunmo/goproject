@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+
+	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
 
 type User struct {
@@ -17,4 +19,28 @@ type User struct {
 
 func (*User) TableName() string {
 	return "user"
+}
+
+type ListUserParams struct {
+	PaginationRequest pagination.Request
+}
+
+type SearchUserParams struct {
+	Uids      []uint32
+	Usernames []string
+}
+
+type GetUserParams struct {
+	Uid      uint32
+	Username string
+}
+
+type CreateUserParams struct {
+	Username string
+	Password string
+}
+
+type ValidatePasswordParams struct {
+	Username string
+	Password string
 }

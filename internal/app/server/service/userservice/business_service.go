@@ -11,8 +11,8 @@ import (
 )
 
 type BusinessService interface {
-	CreateUser(ctx context.Context, cmd CreateUserCommand) (User, error)
-	ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error
+	CreateUser(ctx context.Context, params CreateUserParams) (User, error)
+	ValidatePassword(ctx context.Context, params ValidatePasswordParams) error
 }
 
 type businessService struct {
@@ -27,9 +27,9 @@ func NewBusinessService(db *gorm.DB, redisSync *redsync.Redsync) BusinessService
 	}
 }
 
-func (service *businessService) CreateUser(ctx context.Context, cmd CreateUserCommand) (User, error) {
+func (service *businessService) CreateUser(ctx context.Context, params CreateUserParams) (User, error) {
 	mutex := service.redisSync.NewMutex(
-		rediskey.MutexCreateUser(cmd.Username),
+		rediskey.MutexCreateUser(params.Username),
 		redsync.WithTries(1),
 	)
 
@@ -39,7 +39,7 @@ func (service *businessService) CreateUser(ctx context.Context, cmd CreateUserCo
 	}
 	defer mutex.Unlock()
 
-	user, ok, err := DbGetUserByUsername(ctx, service.db, cmd.Username)
+	user, ok, err := DbGetUserByUsername(ctx, service.db, params.Username)
 	if err != nil {
 		return User{}, err
 	}
@@ -49,8 +49,8 @@ func (service *businessService) CreateUser(ctx context.Context, cmd CreateUserCo
 	}
 
 	user = User{
-		Username: cmd.Username,
-		Password: cryptPassword(cmd.Password),
+		Username: params.Username,
+		Password: cryptPassword(params.Password),
 	}
 
 	err = DbCreateUser(ctx, service.db, &user)
@@ -61,8 +61,8 @@ func (service *businessService) CreateUser(ctx context.Context, cmd CreateUserCo
 	return user, nil
 }
 
-func (service *businessService) ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error {
-	user, ok, err := DbGetUserByUsername(ctx, service.db, cmd.Username)
+func (service *businessService) ValidatePassword(ctx context.Context, params ValidatePasswordParams) error {
+	user, ok, err := DbGetUserByUsername(ctx, service.db, params.Username)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func (service *businessService) ValidatePassword(ctx context.Context, cmd Valida
 		return servercode.UserNotFound
 	}
 
-	if !comparePassword(user.Password, cmd.Password) {
+	if !comparePassword(user.Password, params.Password) {
 		return servercode.LoginPasswordWrong
 	}
 

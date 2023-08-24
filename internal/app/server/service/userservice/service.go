@@ -26,22 +26,22 @@ func NewService(listService ListService, readService ReadService, businessServic
 	}
 }
 
-func (service *service) ListUser(ctx context.Context, cmd ListUserCommand) (pagination.Pagination, []User, error) {
-	return service.listService.ListUser(ctx, cmd)
+func (service *service) ListUser(ctx context.Context, params ListUserParams) (pagination.Pagination, []User, error) {
+	return service.listService.ListUser(ctx, params)
 }
 
-func (service *service) SearchUser(ctx context.Context, cmd SearchUserCommand) ([]User, error) {
-	return service.readService.SearchUser(ctx, cmd)
+func (service *service) SearchUser(ctx context.Context, params SearchUserParams) ([]User, error) {
+	return service.readService.SearchUser(ctx, params)
 }
 
-func (service *service) GetUser(ctx context.Context, cmd GetUserCommand) (User, error) {
-	return service.readService.GetUser(ctx, cmd)
+func (service *service) GetUser(ctx context.Context, params GetUserParams) (User, error) {
+	return service.readService.GetUser(ctx, params)
 }
 
-func (service *service) CreateUser(ctx context.Context, cmd CreateUserCommand) (User, error) {
-	return service.businessService.CreateUser(ctx, cmd)
+func (service *service) CreateUser(ctx context.Context, params CreateUserParams) (User, error) {
+	return service.businessService.CreateUser(ctx, params)
 }
 
-func (service *service) ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error {
-	return service.businessService.ValidatePassword(ctx, cmd)
+func (service *service) ValidatePassword(ctx context.Context, params ValidatePasswordParams) error {
+	return service.businessService.ValidatePassword(ctx, params)
 }

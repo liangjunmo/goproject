@@ -11,7 +11,7 @@ import (
 )
 
 type ListService interface {
-	ListUser(ctx context.Context, cmd ListUserCommand) (pagination.Pagination, []User, error)
+	ListUser(ctx context.Context, cmd ListUserParams) (pagination.Pagination, []User, error)
 }
 
 type listService struct {
@@ -24,7 +24,7 @@ func NewListService(db *gorm.DB) ListService {
 	}
 }
 
-func (service *listService) ListUser(ctx context.Context, cmd ListUserCommand) (pagination.Pagination, []User, error) {
+func (service *listService) ListUser(ctx context.Context, cmd ListUserParams) (pagination.Pagination, []User, error) {
 	db := service.db.WithContext(ctx).Model(&User{})
 
 	var count int64

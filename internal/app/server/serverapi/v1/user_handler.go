@@ -53,7 +53,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 		return
 	}
 
-	p, users, err := handler.userService.ListUser(ctx, userservice.ListUserCommand{
+	p, users, err := handler.userService.ListUser(ctx, userservice.ListUserParams{
 		PaginationRequest: req.Request,
 	})
 	if err != nil {
@@ -111,7 +111,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 		return
 	}
 
-	users, err := handler.userService.SearchUser(ctx, userservice.SearchUserCommand{
+	users, err := handler.userService.SearchUser(ctx, userservice.SearchUserParams{
 		Uids:      req.Uids,
 		Usernames: req.Usernames,
 	})
@@ -165,7 +165,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.GetUser(ctx, userservice.GetUserCommand{
+	user, err := handler.userService.GetUser(ctx, userservice.GetUserParams{
 		Uid:      req.Uid,
 		Username: req.Username,
 	})
@@ -208,7 +208,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.CreateUser(ctx, userservice.CreateUserCommand{
+	user, err := handler.userService.CreateUser(ctx, userservice.CreateUserParams{
 		Username: req.Username,
 		Password: req.Password,
 	})

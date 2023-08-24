@@ -39,7 +39,7 @@ func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginRes
 		}, servercode.LoginFailedReachLimit
 	}
 
-	err = uc.userService.ValidatePassword(ctx, userservice.ValidatePasswordCommand{
+	err = uc.userService.ValidatePassword(ctx, userservice.ValidatePasswordParams{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -59,7 +59,7 @@ func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginRes
 		return LoginResponse{}, err
 	}
 
-	user, err := uc.userService.GetUser(ctx, userservice.GetUserCommand{
+	user, err := uc.userService.GetUser(ctx, userservice.GetUserParams{
 		Username: req.Username,
 	})
 	if err != nil {
@@ -88,7 +88,7 @@ func (uc *AccountUseCase) CreateToken(ctx context.Context, req CreateTokenReques
 		return CreateTokenResponse{}, servercode.AuthorizeInvalidTicket
 	}
 
-	user, err := uc.userService.GetUser(ctx, userservice.GetUserCommand{
+	user, err := uc.userService.GetUser(ctx, userservice.GetUserParams{
 		Uid: uid,
 	})
 	if err != nil {
@@ -125,7 +125,7 @@ func (uc *AccountUseCase) Auth(ctx context.Context, token string) (*UserJwtClaim
 		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", servercode.AuthorizeFailed)
 	}
 
-	_, err = uc.userService.GetUser(ctx, userservice.GetUserCommand{
+	_, err = uc.userService.GetUser(ctx, userservice.GetUserParams{
 		Uid: claims.Uid,
 	})
 	if err != nil {

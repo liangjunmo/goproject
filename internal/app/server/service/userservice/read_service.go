@@ -10,8 +10,8 @@ import (
 )
 
 type ReadService interface {
-	SearchUser(ctx context.Context, cmd SearchUserCommand) ([]User, error)
-	GetUser(ctx context.Context, cmd GetUserCommand) (User, error)
+	SearchUser(ctx context.Context, cmd SearchUserParams) ([]User, error)
+	GetUser(ctx context.Context, cmd GetUserParams) (User, error)
 }
 
 type readService struct {
@@ -24,7 +24,7 @@ func NewReadService(db *gorm.DB) ReadService {
 	}
 }
 
-func (service *readService) SearchUser(ctx context.Context, cmd SearchUserCommand) ([]User, error) {
+func (service *readService) SearchUser(ctx context.Context, cmd SearchUserParams) ([]User, error) {
 	db := service.db.WithContext(ctx).Model(&User{})
 
 	if len(cmd.Uids) != 0 {
@@ -45,7 +45,7 @@ func (service *readService) SearchUser(ctx context.Context, cmd SearchUserComman
 	return users, nil
 }
 
-func (service *readService) GetUser(ctx context.Context, cmd GetUserCommand) (User, error) {
+func (service *readService) GetUser(ctx context.Context, cmd GetUserParams) (User, error) {
 	db := service.db.WithContext(ctx).Model(&User{})
 
 	if cmd.Uid != 0 {
