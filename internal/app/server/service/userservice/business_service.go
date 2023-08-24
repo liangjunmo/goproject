@@ -4,31 +4,30 @@ import (
 	"context"
 
 	"github.com/go-redsync/redsync/v4"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/rediskey"
 )
 
-type UserService interface {
+type BusinessService interface {
 	CreateUser(ctx context.Context, cmd CreateUserCommand) (User, error)
 	ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error
 }
 
-type userService struct {
+type businessService struct {
 	db        *gorm.DB
 	redisSync *redsync.Redsync
 }
 
-func NewUserService(db *gorm.DB, redisSync *redsync.Redsync) UserService {
-	return &userService{
+func NewBusinessService(db *gorm.DB, redisSync *redsync.Redsync) BusinessService {
+	return &businessService{
 		db:        db,
 		redisSync: redisSync,
 	}
 }
 
-func (service *userService) CreateUser(ctx context.Context, cmd CreateUserCommand) (User, error) {
+func (service *businessService) CreateUser(ctx context.Context, cmd CreateUserCommand) (User, error) {
 	mutex := service.redisSync.NewMutex(
 		rediskey.MutexCreateUser(cmd.Username),
 		redsync.WithTries(1),
@@ -51,7 +50,7 @@ func (service *userService) CreateUser(ctx context.Context, cmd CreateUserComman
 
 	user = User{
 		Username: cmd.Username,
-		Password: service.cryptPassword(cmd.Password),
+		Password: cryptPassword(cmd.Password),
 	}
 
 	err = DbCreateUser(ctx, service.db, &user)
@@ -62,7 +61,7 @@ func (service *userService) CreateUser(ctx context.Context, cmd CreateUserComman
 	return user, nil
 }
 
-func (service *userService) ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error {
+func (service *businessService) ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error {
 	user, ok, err := DbGetUserByUsername(ctx, service.db, cmd.Username)
 	if err != nil {
 		return err
@@ -72,19 +71,9 @@ func (service *userService) ValidatePassword(ctx context.Context, cmd ValidatePa
 		return servercode.UserNotFound
 	}
 
-	if !service.comparePassword(user.Password, cmd.Password) {
+	if !comparePassword(user.Password, cmd.Password) {
 		return servercode.LoginPasswordWrong
 	}
 
 	return nil
-}
-
-func (service *userService) cryptPassword(password string) string {
-	hashed, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(hashed)
-}
-
-func (service *userService) comparePassword(hashed, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
-	return err == nil
 }

@@ -14,12 +14,12 @@ import (
 
 type UserHandler struct {
 	*BaseHandler
-	userHubService userservice.HubService
+	userService userservice.Service
 }
 
-func NewUserHandler(userHubService userservice.HubService) *UserHandler {
+func NewUserHandler(userService userservice.Service) *UserHandler {
 	return &UserHandler{
-		userHubService: userHubService,
+		userService: userService,
 	}
 }
 
@@ -53,7 +53,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 		return
 	}
 
-	p, users, err := handler.userHubService.ListUser(ctx, userservice.ListUserCommand{
+	p, users, err := handler.userService.ListUser(ctx, userservice.ListUserCommand{
 		PaginationRequest: req.Request,
 	})
 	if err != nil {
@@ -111,7 +111,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 		return
 	}
 
-	users, err := handler.userHubService.SearchUser(ctx, userservice.SearchUserCommand{
+	users, err := handler.userService.SearchUser(ctx, userservice.SearchUserCommand{
 		Uids:      req.Uids,
 		Usernames: req.Usernames,
 	})
@@ -165,7 +165,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userHubService.GetUser(ctx, userservice.GetUserCommand{
+	user, err := handler.userService.GetUser(ctx, userservice.GetUserCommand{
 		Uid:      req.Uid,
 		Username: req.Username,
 	})
@@ -208,7 +208,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userHubService.CreateUser(ctx, userservice.CreateUserCommand{
+	user, err := handler.userService.CreateUser(ctx, userservice.CreateUserCommand{
 		Username: req.Username,
 		Password: req.Password,
 	})

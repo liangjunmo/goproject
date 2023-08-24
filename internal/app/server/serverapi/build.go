@@ -53,12 +53,12 @@ func Build(router *gin.Engine) (release func()) {
 
 	userListService := userservice.NewListService(db)
 	userReadService := userservice.NewReadService(db)
-	userService := userservice.NewUserService(db, redisSync)
-	userHubService := userservice.NewHubService(userListService, userReadService, userService)
+	userBusinessService := userservice.NewBusinessService(db, redisSync)
+	userService := userservice.NewService(userListService, userReadService, userBusinessService)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
-	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountUseCase(redisClient, userHubService))
-	v1UserHandler := v1.NewUserHandler(userHubService)
+	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountUseCase(redisClient, userService))
+	v1UserHandler := v1.NewUserHandler(userService)
 
 	router.GET("/health", v1DefaultHandler.Health)
 

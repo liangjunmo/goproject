@@ -16,14 +16,14 @@ import (
 )
 
 type AccountUseCase struct {
-	redisClient    *redis.Client
-	userHubService userservice.HubService
+	redisClient *redis.Client
+	userService userservice.Service
 }
 
-func NewAccountUseCase(redisClient *redis.Client, userHubService userservice.HubService) *AccountUseCase {
+func NewAccountUseCase(redisClient *redis.Client, userService userservice.Service) *AccountUseCase {
 	return &AccountUseCase{
-		redisClient:    redisClient,
-		userHubService: userHubService,
+		redisClient: redisClient,
+		userService: userService,
 	}
 }
 
@@ -39,7 +39,7 @@ func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginRes
 		}, servercode.LoginFailedReachLimit
 	}
 
-	err = uc.userHubService.ValidatePassword(ctx, userservice.ValidatePasswordCommand{
+	err = uc.userService.ValidatePassword(ctx, userservice.ValidatePasswordCommand{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -59,7 +59,7 @@ func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginRes
 		return LoginResponse{}, err
 	}
 
-	user, err := uc.userHubService.GetUser(ctx, userservice.GetUserCommand{
+	user, err := uc.userService.GetUser(ctx, userservice.GetUserCommand{
 		Username: req.Username,
 	})
 	if err != nil {
@@ -88,7 +88,7 @@ func (uc *AccountUseCase) CreateToken(ctx context.Context, req CreateTokenReques
 		return CreateTokenResponse{}, servercode.AuthorizeInvalidTicket
 	}
 
-	user, err := uc.userHubService.GetUser(ctx, userservice.GetUserCommand{
+	user, err := uc.userService.GetUser(ctx, userservice.GetUserCommand{
 		Uid: uid,
 	})
 	if err != nil {
@@ -125,7 +125,7 @@ func (uc *AccountUseCase) Auth(ctx context.Context, token string) (*UserJwtClaim
 		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", servercode.AuthorizeFailed)
 	}
 
-	_, err = uc.userHubService.GetUser(ctx, userservice.GetUserCommand{
+	_, err = uc.userService.GetUser(ctx, userservice.GetUserCommand{
 		Uid: claims.Uid,
 	})
 	if err != nil {
