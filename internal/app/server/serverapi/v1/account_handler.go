@@ -32,7 +32,6 @@ type LoginResponse struct {
 
 func (handler *AccountHandler) Login(c *gin.Context) {
 	ctx := c.Request.Context()
-	l := log.WithContext(ctx)
 
 	var (
 		req  LoginRequest
@@ -41,14 +40,14 @@ func (handler *AccountHandler) Login(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
 
 	resp, err = handler.accountUseCase.Login(ctx, req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, resp, err)
 		return
 	}
@@ -66,7 +65,6 @@ type CreateTokenResponse struct {
 
 func (handler *AccountHandler) CreateToken(c *gin.Context) {
 	ctx := c.Request.Context()
-	l := log.WithContext(ctx)
 
 	var (
 		req  CreateTokenRequest
@@ -75,14 +73,14 @@ func (handler *AccountHandler) CreateToken(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
 
 	resp, err = handler.accountUseCase.CreateToken(ctx, req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -92,11 +90,10 @@ func (handler *AccountHandler) CreateToken(c *gin.Context) {
 
 func (handler *AccountHandler) AuthMiddleware(c *gin.Context) {
 	ctx := c.Request.Context()
-	l := log.WithContext(ctx)
 
 	claims, err := handler.accountUseCase.Auth(ctx, c.GetHeader("Authorization"))
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		c.Abort()
 		handler.Response(c, nil, err)
 		return

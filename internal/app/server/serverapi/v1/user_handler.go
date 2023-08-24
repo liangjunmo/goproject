@@ -40,7 +40,6 @@ type ListUserData struct {
 
 func (handler *UserHandler) ListUser(c *gin.Context) {
 	ctx := c.Request.Context()
-	l := log.WithContext(ctx)
 
 	var (
 		req  ListUserRequest
@@ -49,7 +48,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -58,7 +57,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 		PaginationRequest: req.Request,
 	})
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -99,7 +98,6 @@ type SearchUserData struct {
 
 func (handler *UserHandler) SearchUser(c *gin.Context) {
 	ctx := c.Request.Context()
-	l := log.WithContext(ctx)
 
 	var (
 		req  SearchUserRequest
@@ -108,7 +106,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -118,7 +116,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 		Usernames: req.Usernames,
 	})
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -154,7 +152,6 @@ type GetUserResponse struct {
 
 func (handler *UserHandler) GetUser(c *gin.Context) {
 	ctx := c.Request.Context()
-	l := log.WithContext(ctx)
 
 	var (
 		req  GetUserRequest
@@ -163,7 +160,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -173,7 +170,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 		Username: req.Username,
 	})
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}
@@ -198,7 +195,6 @@ type CreateUserResponse struct {
 
 func (handler *UserHandler) CreateUser(c *gin.Context) {
 	ctx := c.Request.Context()
-	l := log.WithContext(ctx)
 
 	var (
 		req  CreateUserRequest
@@ -207,7 +203,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
 		return
 	}
@@ -217,7 +213,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		Password: req.Password,
 	})
 	if err != nil {
-		l.WithError(err).Error(err)
+		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
 		return
 	}

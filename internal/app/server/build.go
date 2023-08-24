@@ -81,9 +81,10 @@ func BuildLog() error {
 	)
 
 	logrus.AddHook(
-		logrushook.NewTransErrorToWarningLogrusHook(
+		logrushook.NewTransErrorLevelLogrusHook(
+			logrus.WarnLevel,
 			[]gocode.Code{servercode.InternalServerError},
-			false,
+			true,
 		),
 	)
 
