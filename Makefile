@@ -84,7 +84,7 @@ delete-nginx:
 	-kubectl delete -f ./deploy/k8s/goproject/nginx/nginx-service.yaml
 
 PHONY = redeploy-server-api
-redeploy-server-api: go-build-server docker-build-server docker-push-server delete-server-api rewrite-yaml create-server-api recover-yaml
+redeploy-server-api: go-build-server docker-build-server docker-push-server delete-server-api delete-server-worker1 rewrite-yaml create-server-api create-server-worker1 recover-yaml
 
 go-build-server:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GO) build -ldflags ${GO_LDFLAGS} -o ./tmp/goproject-server ./cmd/server/
@@ -103,8 +103,10 @@ delete-server-api:
 	-kubectl delete -f ./deploy/k8s/goproject/server/api-deployment.yaml
 	-kubectl delete -f ./deploy/k8s/goproject/server/api-service.yaml
 
-apply-server-api:
-	kubectl apply -f ./deploy/k8s/goproject/server/api-deployment.yaml --record || $(call panic-and-recover-yaml)
-	kubectl apply -f ./deploy/k8s/goproject/server/api-service.yaml --record || $(call panic-and-recover-yaml)
+create-server-worker1:
+	kubectl create -f ./deploy/k8s/goproject/server/worker1-deployment.yaml || $(call panic-and-recover-yaml)
+
+delete-server-worker1:
+	-kubectl delete -f ./deploy/k8s/goproject/server/worker1-deployment.yaml
 
 # <<< deploy k8s
