@@ -11,12 +11,12 @@ import (
 
 type AccountHandler struct {
 	*BaseHandler
-	accountUseCase *AccountUseCase
+	accountComponent *AccountComponent
 }
 
-func NewAccountHandler(accountUseCase *AccountUseCase) *AccountHandler {
+func NewAccountHandler(accountUseCase *AccountComponent) *AccountHandler {
 	return &AccountHandler{
-		accountUseCase: accountUseCase,
+		accountComponent: accountUseCase,
 	}
 }
 
@@ -45,7 +45,7 @@ func (handler *AccountHandler) Login(c *gin.Context) {
 		return
 	}
 
-	resp, err = handler.accountUseCase.Login(ctx, req)
+	resp, err = handler.accountComponent.Login(ctx, req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, resp, err)
@@ -78,7 +78,7 @@ func (handler *AccountHandler) CreateToken(c *gin.Context) {
 		return
 	}
 
-	resp, err = handler.accountUseCase.CreateToken(ctx, req)
+	resp, err = handler.accountComponent.CreateToken(ctx, req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
@@ -91,7 +91,7 @@ func (handler *AccountHandler) CreateToken(c *gin.Context) {
 func (handler *AccountHandler) AuthMiddleware(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	claims, err := handler.accountUseCase.Auth(ctx, c.GetHeader("Authorization"))
+	claims, err := handler.accountComponent.Auth(ctx, c.GetHeader("Authorization"))
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		c.Abort()

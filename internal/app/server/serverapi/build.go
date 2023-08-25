@@ -57,7 +57,7 @@ func Build(router *gin.Engine) (release func()) {
 	userService := userservice.NewService(userListService, userReadService, userBusinessService)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
-	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountUseCase(redisClient, userService))
+	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountComponent(redisClient, userService))
 	v1UserHandler := v1.NewUserHandler(userService)
 
 	router.GET("/health", v1DefaultHandler.Health)

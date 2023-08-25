@@ -15,20 +15,20 @@ import (
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 )
 
-type AccountUseCase struct {
+type AccountComponent struct {
 	redisClient *redis.Client
 	userService userservice.Service
 }
 
-func NewAccountUseCase(redisClient *redis.Client, userService userservice.Service) *AccountUseCase {
-	return &AccountUseCase{
+func NewAccountComponent(redisClient *redis.Client, userService userservice.Service) *AccountComponent {
+	return &AccountComponent{
 		redisClient: redisClient,
 		userService: userService,
 	}
 }
 
-func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginResponse, error) {
-	count, err := RedisGetLoginFailedCount(ctx, uc.redisClient, req.Username)
+func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) (LoginResponse, error) {
+	count, err := RedisGetLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -39,12 +39,12 @@ func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginRes
 		}, servercode.LoginFailedReachLimit
 	}
 
-	err = uc.userService.ValidatePassword(ctx, userservice.ValidatePasswordParams{
+	err = component.userService.ValidatePassword(ctx, userservice.ValidatePasswordParams{
 		Username: req.Username,
 		Password: req.Password,
 	})
 	if err != nil {
-		e := RedisSetLoginFailedCount(ctx, uc.redisClient, req.Username)
+		e := RedisSetLoginFailedCount(ctx, component.redisClient, req.Username)
 		if e != nil {
 			return LoginResponse{}, e
 		}
@@ -54,21 +54,21 @@ func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginRes
 		}, err
 	}
 
-	err = RedisDelLoginFailedCount(ctx, uc.redisClient, req.Username)
+	err = RedisDelLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
 		return LoginResponse{}, err
 	}
 
-	user, err := uc.userService.GetUser(ctx, userservice.GetUserParams{
+	user, err := component.userService.GetUser(ctx, userservice.GetUserParams{
 		Username: req.Username,
 	})
 	if err != nil {
 		return LoginResponse{}, err
 	}
 
-	ticket := uc.generateLoginTicket(user.Id)
+	ticket := component.generateLoginTicket(user.Id)
 
-	err = RedisSetLoginTicket(ctx, uc.redisClient, ticket, user.Id, time.Minute)
+	err = RedisSetLoginTicket(ctx, component.redisClient, ticket, user.Id, time.Minute)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -78,8 +78,8 @@ func (uc *AccountUseCase) Login(ctx context.Context, req LoginRequest) (LoginRes
 	}, nil
 }
 
-func (uc *AccountUseCase) CreateToken(ctx context.Context, req CreateTokenRequest) (CreateTokenResponse, error) {
-	uid, ok, err := RedisGetLoginTicket(ctx, uc.redisClient, req.Ticket)
+func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTokenRequest) (CreateTokenResponse, error) {
+	uid, ok, err := RedisGetLoginTicket(ctx, component.redisClient, req.Ticket)
 	if err != nil {
 		return CreateTokenResponse{}, err
 	}
@@ -88,7 +88,7 @@ func (uc *AccountUseCase) CreateToken(ctx context.Context, req CreateTokenReques
 		return CreateTokenResponse{}, servercode.AuthorizeInvalidTicket
 	}
 
-	user, err := uc.userService.GetUser(ctx, userservice.GetUserParams{
+	user, err := component.userService.GetUser(ctx, userservice.GetUserParams{
 		Uid: uid,
 	})
 	if err != nil {
@@ -100,7 +100,7 @@ func (uc *AccountUseCase) CreateToken(ctx context.Context, req CreateTokenReques
 	}
 	claims.StandardClaims.ExpiresAt = time.Now().Add(time.Hour * 24 * 7).Unix()
 
-	token, err := uc.generateJwtToken(claims)
+	token, err := component.generateJwtToken(claims)
 	if err != nil {
 		return CreateTokenResponse{}, err
 	}
@@ -110,12 +110,12 @@ func (uc *AccountUseCase) CreateToken(ctx context.Context, req CreateTokenReques
 	}, nil
 }
 
-func (uc *AccountUseCase) Auth(ctx context.Context, token string) (*UserJwtClaims, error) {
+func (component *AccountComponent) Auth(ctx context.Context, token string) (*UserJwtClaims, error) {
 	if token == "" {
 		return nil, servercode.AuthorizeInvalidTicket
 	}
 
-	jwtClaims, err := uc.parseJwtToken(token, &UserJwtClaims{})
+	jwtClaims, err := component.parseJwtToken(token, &UserJwtClaims{})
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func (uc *AccountUseCase) Auth(ctx context.Context, token string) (*UserJwtClaim
 		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", servercode.AuthorizeFailed)
 	}
 
-	_, err = uc.userService.GetUser(ctx, userservice.GetUserParams{
+	_, err = component.userService.GetUser(ctx, userservice.GetUserParams{
 		Uid: claims.Uid,
 	})
 	if err != nil {
@@ -135,13 +135,13 @@ func (uc *AccountUseCase) Auth(ctx context.Context, token string) (*UserJwtClaim
 	return claims, nil
 }
 
-func (uc *AccountUseCase) generateLoginTicket(uid uint32) string {
+func (component *AccountComponent) generateLoginTicket(uid uint32) string {
 	hash := sha1.New()
 	hash.Write([]byte(fmt.Sprintf("%d%d", uid, time.Now().Unix())))
 	return base64.URLEncoding.EncodeToString(hash.Sum(nil))
 }
 
-func (uc *AccountUseCase) generateJwtToken(claims jwt.Claims) (string, error) {
+func (component *AccountComponent) generateJwtToken(claims jwt.Claims) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	token, err := jwtToken.SignedString([]byte(serverconfig.Config.Api.JwtKey))
@@ -152,7 +152,7 @@ func (uc *AccountUseCase) generateJwtToken(claims jwt.Claims) (string, error) {
 	return token, nil
 }
 
-func (uc *AccountUseCase) parseJwtToken(token string, claims jwt.Claims) (jwt.Claims, error) {
+func (component *AccountComponent) parseJwtToken(token string, claims jwt.Claims) (jwt.Claims, error) {
 	var jwtToken *jwt.Token
 
 	jwtToken, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
