@@ -21,20 +21,20 @@ build:
 
 # deploy docker >>>
 
-PHONY = dev-middleware
-dev-middleware:
+PHONY = run-dev-middleware
+run-dev-middleware:
 	docker compose -f ./deploy/docker/middleware/docker-compose.yaml -p "goproject-dev-middleware" up -d
 
-PHONY = dev-middleware-start
-dev-middleware-start:
+PHONY = start-dev-middleware
+start-dev-middleware:
 	docker compose -f ./deploy/docker/middleware/docker-compose.yaml -p "goproject-dev-middleware" start
 
-PHONY = dev-middleware-stop
-dev-middleware-stop:
+PHONY = stop-dev-middleware
+stop-dev-middleware:
 	docker compose -f ./deploy/docker/middleware/docker-compose.yaml -p "goproject-dev-middleware" stop
 
-PHONY = dev-server
-dev-server: dev-middleware
+PHONY = run-dev-server
+run-dev-server: run-dev-middleware
 	@mkdir -p tmp
 	GOOS=linux GOARCH=amd64 $(GO) build -ldflags ${GO_LDFLAGS} -o tmp/goproject-server ./cmd/server/
 	chmod u+x ./tmp/goproject-server
@@ -42,13 +42,13 @@ dev-server: dev-middleware
 	docker compose -f ./deploy/docker/server/docker-compose.yaml -p "goproject-dev-server" up -d
 	-docker rmi $(shell docker images -q goproject-server)
 
-PHONY = dev-server-start
-dev-server-start: dev-middleware-start
-	docker compose -f ./deploy/docker/server/docker-compose.yaml -p "goproject-dev-server" start api
+PHONY = start-dev-server
+start-dev-server: start-dev-middleware
+	docker compose -f ./deploy/docker/server/docker-compose.yaml -p "goproject-dev-server" start api worker1
 
-PHONY = dev-server-stop
-dev-server-stop:
-	docker compose -f ./deploy/docker/server/docker-compose.yaml -p "goproject-dev-server" stop api
+PHONY = stop-dev-server
+stop-dev-server:
+	docker compose -f ./deploy/docker/server/docker-compose.yaml -p "goproject-dev-server" stop api worker1
 
 # <<< deploy docker
 
