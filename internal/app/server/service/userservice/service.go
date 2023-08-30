@@ -3,6 +3,9 @@ package userservice
 import (
 	"context"
 
+	"github.com/go-redsync/redsync/v4"
+	"gorm.io/gorm"
+
 	"github.com/liangjunmo/goproject/internal/app/server/types"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
@@ -19,11 +22,11 @@ type service struct {
 	businessService BusinessService
 }
 
-func NewService(listService ListService, readService ReadService, businessService BusinessService) Service {
+func NewService(db *gorm.DB, redisSync *redsync.Redsync) Service {
 	return &service{
-		listService:     listService,
-		readService:     readService,
-		businessService: businessService,
+		listService:     newListService(db),
+		readService:     newReadService(db),
+		businessService: newBusinessService(db, redisSync),
 	}
 }
 

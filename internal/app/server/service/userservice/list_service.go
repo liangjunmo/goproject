@@ -19,7 +19,7 @@ type listService struct {
 	db *gorm.DB
 }
 
-func NewListService(db *gorm.DB) ListService {
+func newListService(db *gorm.DB) ListService {
 	return &listService{
 		db: db,
 	}

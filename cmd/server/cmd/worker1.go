@@ -51,10 +51,7 @@ func buildWorker1(ctx context.Context, wg *sync.WaitGroup) (release func()) {
 
 	redisSync := newRedisSync(redisClient)
 
-	userListService := userservice.NewListService(db)
-	userReadService := userservice.NewReadService(db)
-	userBusinessService := userservice.NewBusinessService(db, redisSync)
-	userService := userservice.NewService(userListService, userReadService, userBusinessService)
+	userService := userservice.NewService(db, redisSync)
 
 	wg.Add(1)
 	go userworker.NewListUserWorker(db, userService).Run(ctx, wg)

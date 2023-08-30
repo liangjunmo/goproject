@@ -86,10 +86,7 @@ func buildApi(router *gin.Engine) (release func()) {
 
 	redisSync := newRedisSync(redisClient)
 
-	userListService := userservice.NewListService(db)
-	userReadService := userservice.NewReadService(db)
-	userBusinessService := userservice.NewBusinessService(db, redisSync)
-	userService := userservice.NewService(userListService, userReadService, userBusinessService)
+	userService := userservice.NewService(db, redisSync)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
 	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountComponent(redisClient, userService))

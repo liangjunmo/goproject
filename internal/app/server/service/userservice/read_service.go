@@ -19,7 +19,7 @@ type readService struct {
 	db *gorm.DB
 }
 
-func NewReadService(db *gorm.DB) ReadService {
+func newReadService(db *gorm.DB) ReadService {
 	return &readService{
 		db: db,
 	}

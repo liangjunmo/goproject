@@ -22,7 +22,7 @@ type businessService struct {
 	redisSync *redsync.Redsync
 }
 
-func NewBusinessService(db *gorm.DB, redisSync *redsync.Redsync) BusinessService {
+func newBusinessService(db *gorm.DB, redisSync *redsync.Redsync) BusinessService {
 	return &businessService{
 		db:        db,
 		redisSync: redisSync,
