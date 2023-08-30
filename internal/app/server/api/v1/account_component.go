@@ -2,7 +2,6 @@ package v1
 
 import (
 	"context"
-	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
 	"time"
@@ -13,6 +12,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
+	"github.com/liangjunmo/goproject/internal/pkg/hashutil"
 )
 
 type AccountComponent struct {
@@ -136,9 +136,9 @@ func (component *AccountComponent) Auth(ctx context.Context, token string) (*Use
 }
 
 func (component *AccountComponent) generateLoginTicket(uid uint32) string {
-	hash := sha1.New()
-	hash.Write([]byte(fmt.Sprintf("%d%d", uid, time.Now().Unix())))
-	return base64.URLEncoding.EncodeToString(hash.Sum(nil))
+	s := fmt.Sprintf("%d%d", uid, time.Now().Unix())
+	b := hashutil.Sha1StringToByte(s)
+	return base64.URLEncoding.EncodeToString(b)
 }
 
 func (component *AccountComponent) generateJwtToken(claims jwt.Claims) (string, error) {
