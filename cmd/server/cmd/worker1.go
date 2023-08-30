@@ -9,7 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/liangjunmo/goproject/internal/app/server/serverworker1"
+	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
+	"github.com/liangjunmo/goproject/internal/app/server/worker/userworker"
 )
 
 func init() {
@@ -24,7 +25,7 @@ var worker1Cmd = &cobra.Command{
 		ctx, cancel := context.WithCancel(context.Background())
 		wg := &sync.WaitGroup{}
 
-		release := serverworker1.Build(ctx, wg)
+		release := buildWorker1(ctx, wg)
 		defer release()
 
 		c := make(chan os.Signal, 1)
@@ -34,4 +35,29 @@ var worker1Cmd = &cobra.Command{
 		cancel()
 		wg.Wait()
 	},
+}
+
+func buildWorker1(ctx context.Context, wg *sync.WaitGroup) (release func()) {
+	db := connectDb(true)
+
+	redisClient := connectRedis()
+
+	release = func() {
+		db, _ := db.DB()
+		_ = db.Close()
+
+		_ = redisClient.Close()
+	}
+
+	redisSync := newRedisSync(redisClient)
+
+	userListService := userservice.NewListService(db)
+	userReadService := userservice.NewReadService(db)
+	userBusinessService := userservice.NewBusinessService(db, redisSync)
+	userService := userservice.NewService(userListService, userReadService, userBusinessService)
+
+	wg.Add(1)
+	go userworker.NewListUserWorker(db, userService).Run(ctx, wg)
+
+	return
 }
