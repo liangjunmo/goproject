@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
+	"github.com/liangjunmo/goproject/internal/app/server/types"
 )
 
 type ListUserWorker struct {
@@ -45,21 +46,21 @@ func (worker *ListUserWorker) Run(ctx context.Context, wg *sync.WaitGroup) {
 }
 
 func (worker *ListUserWorker) handleTimer(ctx context.Context) {
-	var users []userservice.User
+	var users []types.User
 
-	err := worker.db.Model(&userservice.User{}).Find(&users).Error
+	err := worker.db.Model(&types.User{}).Find(&users).Error
 	if err != nil {
 		worker.log.WithContext(ctx).WithError(err).Error(err)
 		return
 	}
 
 	for _, user := range users {
-		worker.output(ctx, user.Id)
+		worker.output(ctx, user.Uid)
 	}
 }
 
 func (worker *ListUserWorker) output(ctx context.Context, uid uint32) {
-	user, err := worker.userService.GetUser(ctx, userservice.GetUserParams{
+	user, err := worker.userService.GetUser(ctx, userservice.GetUserRequest{
 		Uid: uid,
 	})
 	if err != nil {

@@ -39,7 +39,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		}, codes.LoginFailedReachLimit
 	}
 
-	err = component.userService.ValidatePassword(ctx, userservice.ValidatePasswordParams{
+	err = component.userService.ValidatePassword(ctx, userservice.ValidatePasswordRequest{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -59,16 +59,16 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		return LoginResponse{}, err
 	}
 
-	user, err := component.userService.GetUser(ctx, userservice.GetUserParams{
+	user, err := component.userService.GetUser(ctx, userservice.GetUserRequest{
 		Username: req.Username,
 	})
 	if err != nil {
 		return LoginResponse{}, err
 	}
 
-	ticket := component.generateLoginTicket(user.Id)
+	ticket := component.generateLoginTicket(user.Uid)
 
-	err = RedisSetLoginTicket(ctx, component.redisClient, ticket, user.Id, time.Minute)
+	err = RedisSetLoginTicket(ctx, component.redisClient, ticket, user.Uid, time.Minute)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -88,7 +88,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 		return CreateTokenResponse{}, codes.AuthorizeInvalidTicket
 	}
 
-	user, err := component.userService.GetUser(ctx, userservice.GetUserParams{
+	user, err := component.userService.GetUser(ctx, userservice.GetUserRequest{
 		Uid: uid,
 	})
 	if err != nil {
@@ -96,7 +96,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 	}
 
 	claims := UserJwtClaims{
-		Uid: user.Id,
+		Uid: user.Uid,
 	}
 	claims.StandardClaims.ExpiresAt = time.Now().Add(time.Hour * 24 * 7).Unix()
 
@@ -125,7 +125,7 @@ func (component *AccountComponent) Auth(ctx context.Context, token string) (*Use
 		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", codes.AuthorizeFailed)
 	}
 
-	_, err = component.userService.GetUser(ctx, userservice.GetUserParams{
+	_, err = component.userService.GetUser(ctx, userservice.GetUserRequest{
 		Uid: claims.Uid,
 	})
 	if err != nil {

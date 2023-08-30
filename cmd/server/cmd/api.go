@@ -17,6 +17,7 @@ import (
 	v1 "github.com/liangjunmo/goproject/internal/app/server/api/v1"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
+	"github.com/liangjunmo/goproject/internal/app/server/types"
 )
 
 func init() {
@@ -63,7 +64,7 @@ var apiCmd = &cobra.Command{
 
 func migrateDb(db *gorm.DB) {
 	err := db.AutoMigrate(
-		&userservice.User{},
+		&types.User{},
 	)
 	if err != nil {
 		log.Fatal(err)

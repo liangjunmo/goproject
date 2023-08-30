@@ -7,11 +7,12 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/internal/app/server/codes"
+	"github.com/liangjunmo/goproject/internal/app/server/types"
 )
 
 type ReadService interface {
-	SearchUser(ctx context.Context, cmd SearchUserParams) ([]User, error)
-	GetUser(ctx context.Context, cmd GetUserParams) (User, error)
+	SearchUser(ctx context.Context, req SearchUserRequest) ([]types.User, error)
+	GetUser(ctx context.Context, req GetUserRequest) (types.User, error)
 }
 
 type readService struct {
@@ -24,18 +25,18 @@ func NewReadService(db *gorm.DB) ReadService {
 	}
 }
 
-func (service *readService) SearchUser(ctx context.Context, cmd SearchUserParams) ([]User, error) {
-	db := service.db.WithContext(ctx).Model(&User{})
+func (service *readService) SearchUser(ctx context.Context, req SearchUserRequest) ([]types.User, error) {
+	db := service.db.WithContext(ctx).Model(&types.User{})
 
-	if len(cmd.Uids) != 0 {
-		db = db.Where("id in (?)", cmd.Uids)
+	if len(req.Uids) != 0 {
+		db = db.Where("id in (?)", req.Uids)
 	}
 
-	if len(cmd.Usernames) != 0 {
-		db = db.Where("username in (?)", cmd.Usernames)
+	if len(req.Usernames) != 0 {
+		db = db.Where("username in (?)", req.Usernames)
 	}
 
-	var users []User
+	var users []types.User
 
 	err := db.Find(&users).Error
 	if err != nil {
@@ -45,26 +46,26 @@ func (service *readService) SearchUser(ctx context.Context, cmd SearchUserParams
 	return users, nil
 }
 
-func (service *readService) GetUser(ctx context.Context, cmd GetUserParams) (User, error) {
-	db := service.db.WithContext(ctx).Model(&User{})
+func (service *readService) GetUser(ctx context.Context, req GetUserRequest) (types.User, error) {
+	db := service.db.WithContext(ctx).Model(&types.User{})
 
-	if cmd.Uid != 0 {
-		db = db.Where("id = ?", cmd.Uid)
+	if req.Uid != 0 {
+		db = db.Where("id = ?", req.Uid)
 	}
 
-	if cmd.Username != "" {
-		db = db.Where("username = ?", cmd.Username)
+	if req.Username != "" {
+		db = db.Where("username = ?", req.Username)
 	}
 
-	var user User
+	var user types.User
 
 	err := db.Limit(1).Scan(&user).Error
 	if err != nil {
-		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if user.Id == 0 {
-		return User{}, codes.UserNotFound
+	if user.Uid == 0 {
+		return types.User{}, codes.UserNotFound
 	}
 
 	return user, nil

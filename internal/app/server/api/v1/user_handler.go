@@ -53,7 +53,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 		return
 	}
 
-	p, users, err := handler.userService.ListUser(ctx, userservice.ListUserParams{
+	p, users, err := handler.userService.ListUser(ctx, userservice.ListUserRequest{
 		PaginationRequest: req.Request,
 	})
 	if err != nil {
@@ -74,7 +74,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 
 	for _, user := range users {
 		resp.List = append(resp.List, ListUserData{
-			Uid:        user.Id,
+			Uid:        user.Uid,
 			Username:   user.Username,
 			CreateTime: user.CreateTime.Format(timeutil.LayoutTime),
 		})
@@ -111,7 +111,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 		return
 	}
 
-	users, err := handler.userService.SearchUser(ctx, userservice.SearchUserParams{
+	users, err := handler.userService.SearchUser(ctx, userservice.SearchUserRequest{
 		Uids:      req.Uids,
 		Usernames: req.Usernames,
 	})
@@ -130,7 +130,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 
 	for _, user := range users {
 		resp = append(resp, SearchUserData{
-			Uid:        user.Id,
+			Uid:        user.Uid,
 			Username:   user.Username,
 			CreateTime: user.CreateTime.Format(timeutil.LayoutTime),
 		})
@@ -165,7 +165,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.GetUser(ctx, userservice.GetUserParams{
+	user, err := handler.userService.GetUser(ctx, userservice.GetUserRequest{
 		Uid:      req.Uid,
 		Username: req.Username,
 	})
@@ -176,7 +176,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 	}
 
 	resp = GetUserResponse{
-		Uid:        user.Id,
+		Uid:        user.Uid,
 		Username:   user.Username,
 		CreateTime: user.CreateTime.Format(timeutil.LayoutTime),
 	}
@@ -208,7 +208,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.CreateUser(ctx, userservice.CreateUserParams{
+	user, err := handler.userService.CreateUser(ctx, userservice.CreateUserRequest{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -219,7 +219,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	resp = CreateUserResponse{
-		Uid: user.Id,
+		Uid: user.Uid,
 	}
 
 	handler.Response(c, resp, nil)
