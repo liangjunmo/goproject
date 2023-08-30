@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gocode"
 
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 )
 
 type BaseHandler struct{}
@@ -25,15 +25,15 @@ func (handler *BaseHandler) buildResponseBody(c *gin.Context, data interface{}, 
 
 	code := gocode.Parse(err)
 	if code == gocode.SuccessCode {
-		code = servercode.OK
+		code = codes.OK
 	} else if code == gocode.DefaultCode {
-		code = servercode.Unknown
+		code = codes.Unknown
 	}
 
 	body := gin.H{
 		"data": data,
 		"code": code,
-		"msg":  servercode.Translate(code, servercode.Language(c.GetHeader("Accept-Language"))),
+		"msg":  codes.Translate(code, codes.Language(c.GetHeader("Accept-Language"))),
 	}
 
 	if config.Config.Debug {

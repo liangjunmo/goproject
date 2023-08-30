@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
@@ -49,7 +49,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
-		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
+		handler.Response(c, nil, fmt.Errorf("%w: %v", codes.InvalidRequest, err))
 		return
 	}
 
@@ -107,7 +107,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
-		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
+		handler.Response(c, nil, fmt.Errorf("%w: %v", codes.InvalidRequest, err))
 		return
 	}
 
@@ -161,7 +161,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
-		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
+		handler.Response(c, nil, fmt.Errorf("%w: %v", codes.InvalidRequest, err))
 		return
 	}
 
@@ -204,7 +204,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
-		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
+		handler.Response(c, nil, fmt.Errorf("%w: %v", codes.InvalidRequest, err))
 		return
 	}
 

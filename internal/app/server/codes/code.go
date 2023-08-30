@@ -1,4 +1,4 @@
-package servercode
+package codes
 
 import "github.com/liangjunmo/gocode"
 

@@ -10,8 +10,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/redis/go-redis/v9"
 
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 )
 
@@ -36,7 +36,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 	if count >= 5 {
 		return LoginResponse{
 			FailedCount: count,
-		}, servercode.LoginFailedReachLimit
+		}, codes.LoginFailedReachLimit
 	}
 
 	err = component.userService.ValidatePassword(ctx, userservice.ValidatePasswordParams{
@@ -85,7 +85,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 	}
 
 	if !ok {
-		return CreateTokenResponse{}, servercode.AuthorizeInvalidTicket
+		return CreateTokenResponse{}, codes.AuthorizeInvalidTicket
 	}
 
 	user, err := component.userService.GetUser(ctx, userservice.GetUserParams{
@@ -112,7 +112,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 
 func (component *AccountComponent) Auth(ctx context.Context, token string) (*UserJwtClaims, error) {
 	if token == "" {
-		return nil, servercode.AuthorizeInvalidTicket
+		return nil, codes.AuthorizeInvalidTicket
 	}
 
 	jwtClaims, err := component.parseJwtToken(token, &UserJwtClaims{})
@@ -122,7 +122,7 @@ func (component *AccountComponent) Auth(ctx context.Context, token string) (*Use
 
 	claims, ok := jwtClaims.(*UserJwtClaims)
 	if !ok {
-		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", servercode.AuthorizeFailed)
+		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", codes.AuthorizeFailed)
 	}
 
 	_, err = component.userService.GetUser(ctx, userservice.GetUserParams{
@@ -146,7 +146,7 @@ func (component *AccountComponent) generateJwtToken(claims jwt.Claims) (string, 
 
 	token, err := jwtToken.SignedString([]byte(config.Config.Api.JwtKey))
 	if err != nil {
-		return "", fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return "", fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return token, nil
@@ -159,12 +159,12 @@ func (component *AccountComponent) parseJwtToken(token string, claims jwt.Claims
 		return []byte(config.Config.Api.JwtKey), nil
 	})
 	if err != nil {
-		return jwt.Claims(nil), fmt.Errorf("%w: %v", servercode.AuthorizeInvalidToken, err)
+		return jwt.Claims(nil), fmt.Errorf("%w: %v", codes.AuthorizeInvalidToken, err)
 	}
 
 	if jwtToken != nil && jwtToken.Valid {
 		return jwtToken.Claims, nil
 	}
 
-	return jwt.Claims(nil), fmt.Errorf("%w: invalid jwt token", servercode.AuthorizeInvalidToken)
+	return jwt.Claims(nil), fmt.Errorf("%w: invalid jwt token", codes.AuthorizeInvalidToken)
 }

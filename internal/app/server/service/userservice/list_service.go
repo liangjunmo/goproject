@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
 
@@ -31,7 +31,7 @@ func (service *listService) ListUser(ctx context.Context, cmd ListUserParams) (p
 
 	err := db.Count(&count).Error
 	if err != nil {
-		return pagination.Pagination{}, nil, fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return pagination.Pagination{}, nil, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	p := cmd.PaginationRequest.Paginate(count)
@@ -44,7 +44,7 @@ func (service *listService) ListUser(ctx context.Context, cmd ListUserParams) (p
 
 	err = db.Offset(p.Offset).Limit(p.Limit).Order("id desc").Find(&users).Error
 	if err != nil {
-		return pagination.Pagination{}, nil, fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return pagination.Pagination{}, nil, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return p, users, nil

@@ -6,7 +6,7 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/rediskey"
 )
 
@@ -35,7 +35,7 @@ func (service *businessService) CreateUser(ctx context.Context, params CreateUse
 
 	err := mutex.Lock()
 	if err != nil {
-		return User{}, servercode.Timeout
+		return User{}, codes.Timeout
 	}
 	defer mutex.Unlock()
 
@@ -45,7 +45,7 @@ func (service *businessService) CreateUser(ctx context.Context, params CreateUse
 	}
 
 	if ok {
-		return User{}, servercode.UserAlreadyExists
+		return User{}, codes.UserAlreadyExists
 	}
 
 	user = User{
@@ -68,11 +68,11 @@ func (service *businessService) ValidatePassword(ctx context.Context, params Val
 	}
 
 	if !ok {
-		return servercode.UserNotFound
+		return codes.UserNotFound
 	}
 
 	if !comparePassword(user.Password, params.Password) {
-		return servercode.LoginPasswordWrong
+		return codes.LoginPasswordWrong
 	}
 
 	return nil

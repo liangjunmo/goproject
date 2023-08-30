@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 )
 
 type AccountHandler struct {
@@ -41,7 +41,7 @@ func (handler *AccountHandler) Login(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
-		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
+		handler.Response(c, nil, fmt.Errorf("%w: %v", codes.InvalidRequest, err))
 		return
 	}
 
@@ -74,7 +74,7 @@ func (handler *AccountHandler) CreateToken(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
-		handler.Response(c, nil, fmt.Errorf("%w: %v", servercode.InvalidRequest, err))
+		handler.Response(c, nil, fmt.Errorf("%w: %v", codes.InvalidRequest, err))
 		return
 	}
 

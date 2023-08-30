@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 )
 
 type ReadService interface {
@@ -39,7 +39,7 @@ func (service *readService) SearchUser(ctx context.Context, cmd SearchUserParams
 
 	err := db.Find(&users).Error
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return nil, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return users, nil
@@ -60,11 +60,11 @@ func (service *readService) GetUser(ctx context.Context, cmd GetUserParams) (Use
 
 	err := db.Limit(1).Scan(&user).Error
 	if err != nil {
-		return User{}, fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if user.Id == 0 {
-		return User{}, servercode.UserNotFound
+		return User{}, codes.UserNotFound
 	}
 
 	return user, nil

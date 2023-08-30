@@ -9,14 +9,14 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cast"
 
-	"github.com/liangjunmo/goproject/internal/app/server/servercode"
+	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/rediskey"
 )
 
 func RedisGetLoginFailedCount(ctx context.Context, redisClient *redis.Client, username string) (uint32, error) {
 	val, err := redisClient.Get(ctx, rediskey.LoginFailedCount(username)).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
-		return 0, fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return 0, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return cast.ToUint32(val), nil
@@ -30,7 +30,7 @@ func RedisSetLoginFailedCount(ctx context.Context, redisClient *redis.Client, us
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return nil
@@ -39,7 +39,7 @@ func RedisSetLoginFailedCount(ctx context.Context, redisClient *redis.Client, us
 func RedisDelLoginFailedCount(ctx context.Context, redisClient *redis.Client, username string) error {
 	err := redisClient.Del(ctx, rediskey.LoginFailedCount(username)).Err()
 	if err != nil {
-		return fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return nil
@@ -48,7 +48,7 @@ func RedisDelLoginFailedCount(ctx context.Context, redisClient *redis.Client, us
 func RedisGetLoginTicket(ctx context.Context, redisClient *redis.Client, ticket string) (uint32, bool, error) {
 	val, err := redisClient.Get(ctx, rediskey.LoginTicket(ticket)).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
-		return 0, false, fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return 0, false, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if errors.Is(err, redis.Nil) {
@@ -61,7 +61,7 @@ func RedisGetLoginTicket(ctx context.Context, redisClient *redis.Client, ticket 
 func RedisSetLoginTicket(ctx context.Context, redisClient *redis.Client, ticket string, uid uint32, expiration time.Duration) error {
 	err := redisClient.Set(ctx, rediskey.LoginTicket(ticket), uid, expiration).Err()
 	if err != nil {
-		return fmt.Errorf("%w: %v", servercode.InternalServerError, err)
+		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return nil
