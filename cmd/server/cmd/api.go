@@ -14,8 +14,8 @@ import (
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 
+	v1 "github.com/liangjunmo/goproject/internal/app/server/api/v1"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
-	v1 "github.com/liangjunmo/goproject/internal/app/server/serverapi/v1"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 )
 
