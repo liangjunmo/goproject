@@ -1,4 +1,4 @@
-package serverconfig
+package config
 
 import (
 	"github.com/liangjunmo/goproject/internal/pkg/configtemplate"

@@ -14,8 +14,8 @@ import (
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 
+	"github.com/liangjunmo/goproject/internal/app/server/config"
 	v1 "github.com/liangjunmo/goproject/internal/app/server/serverapi/v1"
-	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 )
 
@@ -34,7 +34,7 @@ var apiCmd = &cobra.Command{
 		defer release()
 
 		server := &http.Server{
-			Addr:    serverconfig.Config.Api.Addr,
+			Addr:    config.Config.Api.Addr,
 			Handler: router,
 		}
 
@@ -71,7 +71,7 @@ func migrateDb(db *gorm.DB) {
 }
 
 func buildApi(router *gin.Engine) (release func()) {
-	db := connectDb(serverconfig.Config.Debug)
+	db := connectDb(config.Config.Debug)
 	migrateDb(db)
 
 	redisClient := connectRedis()

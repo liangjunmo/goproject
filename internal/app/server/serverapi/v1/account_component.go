@@ -10,8 +10,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/redis/go-redis/v9"
 
+	"github.com/liangjunmo/goproject/internal/app/server/config"
 	"github.com/liangjunmo/goproject/internal/app/server/servercode"
-	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 )
 
@@ -144,7 +144,7 @@ func (component *AccountComponent) generateLoginTicket(uid uint32) string {
 func (component *AccountComponent) generateJwtToken(claims jwt.Claims) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	token, err := jwtToken.SignedString([]byte(serverconfig.Config.Api.JwtKey))
+	token, err := jwtToken.SignedString([]byte(config.Config.Api.JwtKey))
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", servercode.InternalServerError, err)
 	}
@@ -156,7 +156,7 @@ func (component *AccountComponent) parseJwtToken(token string, claims jwt.Claims
 	var jwtToken *jwt.Token
 
 	jwtToken, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(serverconfig.Config.Api.JwtKey), nil
+		return []byte(config.Config.Api.JwtKey), nil
 	})
 	if err != nil {
 		return jwt.Claims(nil), fmt.Errorf("%w: %v", servercode.AuthorizeInvalidToken, err)

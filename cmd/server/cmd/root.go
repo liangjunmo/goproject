@@ -21,8 +21,8 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
+	"github.com/liangjunmo/goproject/internal/app/server/config"
 	"github.com/liangjunmo/goproject/internal/app/server/servercode"
-	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
 	"github.com/liangjunmo/goproject/internal/version"
 )
@@ -79,25 +79,25 @@ func loadConfig(configFile string) {
 		log.Fatal(err)
 	}
 
-	err = viper.Unmarshal(&serverconfig.Config)
+	err = viper.Unmarshal(&config.Config)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("config: %+v", serverconfig.Config)
+	log.Printf("config: %+v", config.Config)
 
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	serverconfig.ProjectDir = dir
+	config.ProjectDir = dir
 
-	log.Printf("project dir: %s", serverconfig.ProjectDir)
+	log.Printf("project dir: %s", config.ProjectDir)
 }
 
 func initTrace() {
-	gotraceutil.SetTraceIdKey(serverconfig.TraceIdKey)
+	gotraceutil.SetTraceIdKey(config.TraceIdKey)
 	gotraceutil.SetTraceIdGenerator(gotraceutil.DefaultTraceIdGenerator)
 }
 
@@ -114,7 +114,7 @@ func initLog() {
 		logrushook.NewReportCallerLogrusHook(
 			[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
 			func(path string) string {
-				return strings.Replace(path, serverconfig.ProjectDir+"/", "", -1)
+				return strings.Replace(path, config.ProjectDir+"/", "", -1)
 			},
 		),
 	)
@@ -137,10 +137,10 @@ func connectDb(debug bool) *gorm.DB {
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		serverconfig.Config.Db.User,
-		serverconfig.Config.Db.Password,
-		serverconfig.Config.Db.Addr,
-		serverconfig.Config.Db.Database,
+		config.Config.Db.User,
+		config.Config.Db.Password,
+		config.Config.Db.Addr,
+		config.Config.Db.Database,
 	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
@@ -161,8 +161,8 @@ func connectDb(debug bool) *gorm.DB {
 
 func connectRedis() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     serverconfig.Config.Redis.Addr,
-		Password: serverconfig.Config.Redis.Password,
+		Addr:     config.Config.Redis.Addr,
+		Password: config.Config.Redis.Password,
 	})
 
 	err := client.Ping(context.Background()).Err()

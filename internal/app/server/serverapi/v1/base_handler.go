@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gocode"
 
+	"github.com/liangjunmo/goproject/internal/app/server/config"
 	"github.com/liangjunmo/goproject/internal/app/server/servercode"
-	"github.com/liangjunmo/goproject/internal/app/server/serverconfig"
 )
 
 type BaseHandler struct{}
@@ -36,13 +36,13 @@ func (handler *BaseHandler) buildResponseBody(c *gin.Context, data interface{}, 
 		"msg":  servercode.Translate(code, servercode.Language(c.GetHeader("Accept-Language"))),
 	}
 
-	if serverconfig.Config.Debug {
+	if config.Config.Debug {
 		body["error"] = nil
 		if err != nil {
 			body["error"] = err.Error()
 		}
 
-		body["request_id"] = c.Request.Context().Value(serverconfig.TraceIdKey)
+		body["request_id"] = c.Request.Context().Value(config.TraceIdKey)
 	}
 
 	return body
