@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/liangjunmo/goproject/internal/app/server/codes"
+	"github.com/liangjunmo/goproject/internal/app/server/manager/usermanager"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
@@ -15,11 +16,13 @@ import (
 type UserHandler struct {
 	*BaseHandler
 	userService userservice.Service
+	userManager *usermanager.Manager
 }
 
-func NewUserHandler(userService userservice.Service) *UserHandler {
+func NewUserHandler(userService userservice.Service, userManager *usermanager.Manager) *UserHandler {
 	return &UserHandler{
 		userService: userService,
+		userManager: userManager,
 	}
 }
 
@@ -208,10 +211,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.CreateUser(ctx, userservice.CreateUserRequest{
-		Username: req.Username,
-		Password: req.Password,
-	})
+	user, err := handler.userManager.CreateUser(ctx, req.Username, req.Password)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)

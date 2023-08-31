@@ -16,6 +16,7 @@ import (
 
 	v1 "github.com/liangjunmo/goproject/internal/app/server/api/v1"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
+	"github.com/liangjunmo/goproject/internal/app/server/manager/usermanager"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
 	"github.com/liangjunmo/goproject/internal/app/server/types"
 )
@@ -87,10 +88,11 @@ func buildApi(router *gin.Engine) (release func()) {
 	redisSync := newRedisSync(redisClient)
 
 	userService := userservice.NewService(db, redisSync)
+	userManager := usermanager.NewManager(userService)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
 	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountComponent(redisClient, userService))
-	v1UserHandler := v1.NewUserHandler(userService)
+	v1UserHandler := v1.NewUserHandler(userService, userManager)
 
 	router.GET("/health", v1DefaultHandler.Health)
 
