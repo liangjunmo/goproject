@@ -30,7 +30,7 @@ func newBusinessService(db *gorm.DB, redisSync *redsync.Redsync) BusinessService
 }
 
 func (service *businessService) CreateUser(ctx context.Context, req CreateUserRequest) (types.User, error) {
-	mutex := redismutex.NewMutexCreateUser(service.redisSync, req.Username)
+	mutex := redismutex.NewCreateUserMutex(service.redisSync, req.Username)
 
 	err := mutex.Lock()
 	if err != nil {

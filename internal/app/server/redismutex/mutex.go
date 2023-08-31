@@ -6,7 +6,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/app/server/rediskey"
 )
 
-func NewMutexCreateUser(redisSync *redsync.Redsync, username string) *redsync.Mutex {
+func NewCreateUserMutex(redisSync *redsync.Redsync, username string) *redsync.Mutex {
 	return redisSync.NewMutex(
 		rediskey.MutexCreateUser(username),
 		redsync.WithTries(1),
