@@ -10,7 +10,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/app/server/types"
 )
 
-func GetUserByUid(ctx context.Context, db *gorm.DB, uid uint32) (types.User, bool, error) {
+func DbGetUserByUid(ctx context.Context, db *gorm.DB, uid uint32) (types.User, bool, error) {
 	var user types.User
 
 	err := db.WithContext(ctx).Model(&types.User{}).Where("id = ?", uid).Limit(1).Scan(&user).Error
@@ -25,7 +25,7 @@ func GetUserByUid(ctx context.Context, db *gorm.DB, uid uint32) (types.User, boo
 	return user, true, nil
 }
 
-func GetUserByUsername(ctx context.Context, db *gorm.DB, username string) (types.User, bool, error) {
+func DbGetUserByUsername(ctx context.Context, db *gorm.DB, username string) (types.User, bool, error) {
 	var user types.User
 
 	err := db.WithContext(ctx).Model(&types.User{}).Where("username = ?", username).Limit(1).Scan(&user).Error
@@ -40,7 +40,7 @@ func GetUserByUsername(ctx context.Context, db *gorm.DB, username string) (types
 	return user, true, nil
 }
 
-func CreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
+func DbCreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
 	err := db.WithContext(ctx).Create(user).Error
 	if err != nil {
 		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
@@ -49,7 +49,7 @@ func CreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
 	return nil
 }
 
-func UpdateUserByUid(ctx context.Context, db *gorm.DB, uid uint32, user types.User) error {
+func DbUpdateUserByUid(ctx context.Context, db *gorm.DB, uid uint32, user types.User) error {
 	err := db.WithContext(ctx).Model(&types.User{}).Where("id = ?", uid).Limit(1).Updates(&user).Error
 	if err != nil {
 		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
