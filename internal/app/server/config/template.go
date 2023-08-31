@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/liangjunmo/goproject/internal/configtemplate"
+	"github.com/liangjunmo/goproject/internal/app/configtemplate"
 )
 
 type Template struct {
