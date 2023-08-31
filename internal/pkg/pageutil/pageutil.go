@@ -1,4 +1,4 @@
-package pagination
+package pageutil
 
 import "github.com/spf13/cast"
 

@@ -1,11 +1,11 @@
 package userservice
 
 import (
-	"github.com/liangjunmo/goproject/internal/pkg/pagination"
+	"github.com/liangjunmo/goproject/internal/pkg/pageutil"
 )
 
 type ListUserRequest struct {
-	PaginationRequest pagination.Request
+	PaginationRequest pageutil.Request
 }
 
 type SearchUserRequest struct {

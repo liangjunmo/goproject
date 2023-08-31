@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/internal/app/server/types"
-	"github.com/liangjunmo/goproject/internal/pkg/pagination"
+	"github.com/liangjunmo/goproject/internal/pkg/pageutil"
 )
 
 type Service interface {
@@ -30,7 +30,7 @@ func NewService(db *gorm.DB, redisSync *redsync.Redsync) Service {
 	}
 }
 
-func (service *service) ListUser(ctx context.Context, req ListUserRequest) (pagination.Pagination, []types.User, error) {
+func (service *service) ListUser(ctx context.Context, req ListUserRequest) (pageutil.Pagination, []types.User, error) {
 	return service.listService.ListUser(ctx, req)
 }
 

@@ -9,7 +9,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/app/server/manager/usermanager"
 	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
-	"github.com/liangjunmo/goproject/internal/pkg/pagination"
+	"github.com/liangjunmo/goproject/internal/pkg/pageutil"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
 )
 
@@ -27,11 +27,11 @@ func NewUserHandler(userService userservice.Service, userManager *usermanager.Ma
 }
 
 type ListUserRequest struct {
-	pagination.Request
+	pageutil.Request
 }
 
 type ListUserResponse struct {
-	pagination.Pagination
+	pageutil.Pagination
 	List []ListUserData `json:"list"`
 }
 
