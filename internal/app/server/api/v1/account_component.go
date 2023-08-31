@@ -10,7 +10,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/liangjunmo/goproject/internal/app/codes"
-	"github.com/liangjunmo/goproject/internal/app/redisutil"
+	"github.com/liangjunmo/goproject/internal/app/redisdata"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
 	"github.com/liangjunmo/goproject/internal/app/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/hashutil"
@@ -29,7 +29,7 @@ func NewAccountComponent(redisClient *redis.Client, userService userservice.Serv
 }
 
 func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) (LoginResponse, error) {
-	count, err := redisutil.GetLoginFailedCount(ctx, component.redisClient, req.Username)
+	count, err := redisdata.GetLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -45,7 +45,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		Password: req.Password,
 	})
 	if err != nil {
-		e := redisutil.SetLoginFailedCount(ctx, component.redisClient, req.Username)
+		e := redisdata.SetLoginFailedCount(ctx, component.redisClient, req.Username)
 		if e != nil {
 			return LoginResponse{}, e
 		}
@@ -55,7 +55,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		}, err
 	}
 
-	err = redisutil.DelLoginFailedCount(ctx, component.redisClient, req.Username)
+	err = redisdata.DelLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -69,7 +69,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 
 	ticket := component.generateLoginTicket(user.Uid)
 
-	err = redisutil.SetLoginTicket(ctx, component.redisClient, ticket, user.Uid, time.Minute)
+	err = redisdata.SetLoginTicket(ctx, component.redisClient, ticket, user.Uid, time.Minute)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -80,7 +80,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 }
 
 func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTokenRequest) (CreateTokenResponse, error) {
-	uid, ok, err := redisutil.GetLoginTicket(ctx, component.redisClient, req.Ticket)
+	uid, ok, err := redisdata.GetLoginTicket(ctx, component.redisClient, req.Ticket)
 	if err != nil {
 		return CreateTokenResponse{}, err
 	}

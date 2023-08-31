@@ -1,4 +1,4 @@
-package redisutil
+package redisdata
 
 import (
 	"context"
