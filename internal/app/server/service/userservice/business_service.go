@@ -6,9 +6,9 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/rediskey"
 	"github.com/liangjunmo/goproject/internal/app/server/codes"
 	"github.com/liangjunmo/goproject/internal/app/server/datautil"
+	"github.com/liangjunmo/goproject/internal/app/server/redismutex"
 	"github.com/liangjunmo/goproject/internal/app/server/types"
 )
 
@@ -30,10 +30,7 @@ func newBusinessService(db *gorm.DB, redisSync *redsync.Redsync) BusinessService
 }
 
 func (service *businessService) CreateUser(ctx context.Context, req CreateUserRequest) (types.User, error) {
-	mutex := service.redisSync.NewMutex(
-		rediskey.MutexCreateUser(req.Username),
-		redsync.WithTries(1),
-	)
+	mutex := redismutex.NewMutexCreateUser(service.redisSync, req.Username)
 
 	err := mutex.Lock()
 	if err != nil {
