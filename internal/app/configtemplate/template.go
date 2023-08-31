@@ -7,3 +7,7 @@ const (
 	EnvironmentTest   Environment = "test"
 	EnvironmentOnline Environment = "online"
 )
+
+func (env Environment) IsOnline() bool {
+	return env == EnvironmentOnline
+}
