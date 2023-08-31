@@ -6,10 +6,10 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/server/codes"
-	"github.com/liangjunmo/goproject/internal/app/server/datautil"
-	"github.com/liangjunmo/goproject/internal/app/server/redismutex"
-	"github.com/liangjunmo/goproject/internal/app/server/types"
+	"github.com/liangjunmo/goproject/internal/app/codes"
+	"github.com/liangjunmo/goproject/internal/app/dbutil"
+	"github.com/liangjunmo/goproject/internal/app/redismutex"
+	"github.com/liangjunmo/goproject/internal/app/types"
 )
 
 type BusinessService interface {
@@ -38,7 +38,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 	}
 	defer mutex.Unlock()
 
-	user, ok, err := datautil.DbGetUserByUsername(ctx, service.db, req.Username)
+	user, ok, err := dbutil.GetUserByUsername(ctx, service.db, req.Username)
 	if err != nil {
 		return types.User{}, err
 	}
@@ -52,7 +52,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 		Password: cryptPassword(req.Password),
 	}
 
-	err = datautil.DbCreateUser(ctx, service.db, &user)
+	err = dbutil.CreateUser(ctx, service.db, &user)
 	if err != nil {
 		return types.User{}, err
 	}
@@ -61,7 +61,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 }
 
 func (service *businessService) ValidatePassword(ctx context.Context, req ValidatePasswordRequest) error {
-	user, ok, err := datautil.DbGetUserByUsername(ctx, service.db, req.Username)
+	user, ok, err := dbutil.GetUserByUsername(ctx, service.db, req.Username)
 	if err != nil {
 		return err
 	}

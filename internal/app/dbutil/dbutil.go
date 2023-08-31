@@ -1,4 +1,4 @@
-package datautil
+package dbutil
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/server/codes"
-	"github.com/liangjunmo/goproject/internal/app/server/types"
+	"github.com/liangjunmo/goproject/internal/app/codes"
+	"github.com/liangjunmo/goproject/internal/app/types"
 )
 
-func DbGetUserByUid(ctx context.Context, db *gorm.DB, uid uint32) (types.User, bool, error) {
+func GetUserByUid(ctx context.Context, db *gorm.DB, uid uint32) (types.User, bool, error) {
 	var user types.User
 
 	err := db.WithContext(ctx).Model(&types.User{}).Where("id = ?", uid).Limit(1).Scan(&user).Error
@@ -25,7 +25,7 @@ func DbGetUserByUid(ctx context.Context, db *gorm.DB, uid uint32) (types.User, b
 	return user, true, nil
 }
 
-func DbGetUserByUsername(ctx context.Context, db *gorm.DB, username string) (types.User, bool, error) {
+func GetUserByUsername(ctx context.Context, db *gorm.DB, username string) (types.User, bool, error) {
 	var user types.User
 
 	err := db.WithContext(ctx).Model(&types.User{}).Where("username = ?", username).Limit(1).Scan(&user).Error
@@ -40,7 +40,7 @@ func DbGetUserByUsername(ctx context.Context, db *gorm.DB, username string) (typ
 	return user, true, nil
 }
 
-func DbCreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
+func CreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
 	err := db.WithContext(ctx).Create(user).Error
 	if err != nil {
 		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
@@ -49,7 +49,7 @@ func DbCreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
 	return nil
 }
 
-func DbUpdateUserByUid(ctx context.Context, db *gorm.DB, uid uint32, user types.User) error {
+func UpdateUserByUid(ctx context.Context, db *gorm.DB, uid uint32, user types.User) error {
 	err := db.WithContext(ctx).Model(&types.User{}).Where("id = ?", uid).Limit(1).Updates(&user).Error
 	if err != nil {
 		return fmt.Errorf("%w: %v", codes.InternalServerError, err)

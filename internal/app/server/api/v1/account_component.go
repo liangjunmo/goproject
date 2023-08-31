@@ -9,9 +9,10 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/liangjunmo/goproject/internal/app/server/codes"
+	"github.com/liangjunmo/goproject/internal/app/codes"
+	"github.com/liangjunmo/goproject/internal/app/redisutil"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
-	"github.com/liangjunmo/goproject/internal/app/server/service/userservice"
+	"github.com/liangjunmo/goproject/internal/app/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/hashutil"
 )
 
@@ -28,7 +29,7 @@ func NewAccountComponent(redisClient *redis.Client, userService userservice.Serv
 }
 
 func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) (LoginResponse, error) {
-	count, err := RedisGetLoginFailedCount(ctx, component.redisClient, req.Username)
+	count, err := redisutil.GetLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -44,7 +45,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		Password: req.Password,
 	})
 	if err != nil {
-		e := RedisSetLoginFailedCount(ctx, component.redisClient, req.Username)
+		e := redisutil.SetLoginFailedCount(ctx, component.redisClient, req.Username)
 		if e != nil {
 			return LoginResponse{}, e
 		}
@@ -54,7 +55,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		}, err
 	}
 
-	err = RedisDelLoginFailedCount(ctx, component.redisClient, req.Username)
+	err = redisutil.DelLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -68,7 +69,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 
 	ticket := component.generateLoginTicket(user.Uid)
 
-	err = RedisSetLoginTicket(ctx, component.redisClient, ticket, user.Uid, time.Minute)
+	err = redisutil.SetLoginTicket(ctx, component.redisClient, ticket, user.Uid, time.Minute)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -79,7 +80,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 }
 
 func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTokenRequest) (CreateTokenResponse, error) {
-	uid, ok, err := RedisGetLoginTicket(ctx, component.redisClient, req.Ticket)
+	uid, ok, err := redisutil.GetLoginTicket(ctx, component.redisClient, req.Ticket)
 	if err != nil {
 		return CreateTokenResponse{}, err
 	}

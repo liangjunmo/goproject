@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gocode"
 
-	"github.com/liangjunmo/goproject/internal/app/server/codes"
+	"github.com/liangjunmo/goproject/internal/app/codes"
 	"github.com/liangjunmo/goproject/internal/app/server/config"
 )
 

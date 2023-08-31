@@ -6,7 +6,7 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/server/types"
+	"github.com/liangjunmo/goproject/internal/app/types"
 	"github.com/liangjunmo/goproject/internal/pkg/pageutil"
 )
 
