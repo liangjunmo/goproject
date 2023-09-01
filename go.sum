@@ -209,8 +209,8 @@ github.com/leodido/go-urn v1.2.4/go.mod h1:7ZrI8mTSeBSHl/UaRyKQW1qZeMgak41ANeCNa
 github.com/levigross/grequests v0.0.0-20221222020224-9eee758d18d5 h1:AsF9Q1mQoyLv0HzvHFW7O+19dHilOcKU74k7E5ufI1A=
 github.com/liangjunmo/gocode v0.0.0-20230809024612-949d8ec656cb h1:wwWogHjR4Gc7CZNjEpj/1UX6XWxXFCzjFwLrTAI93Rc=
 github.com/liangjunmo/gocode v0.0.0-20230809024612-949d8ec656cb/go.mod h1:sKKIXfnQ3dDgjYmcgIL8ZlYhKAJBE+BWRs3hIFLW32Y=
-github.com/liangjunmo/gotraceutil v0.0.0-20230823114337-0f171e9c6323 h1:2XuRhs41Cz3MaifX56Qys7Eal2SJODvgvipiYAGxq9I=
-github.com/liangjunmo/gotraceutil v0.0.0-20230823114337-0f171e9c6323/go.mod h1:BamvbotI+p1svgJGXEGh3YDSq5SZJaWyCL6ejBwTfDA=
+github.com/liangjunmo/gotraceutil v0.0.0-20230901025137-b9a990e10f61 h1:26YOoKGUq6ep64oderq/15YTouaBm27aAB5aCVuzfMg=
+github.com/liangjunmo/gotraceutil v0.0.0-20230901025137-b9a990e10f61/go.mod h1:BamvbotI+p1svgJGXEGh3YDSq5SZJaWyCL6ejBwTfDA=
 github.com/liangjunmo/logrushook v0.0.0-20230824065256-271ade96e8a0 h1:b8tjqffTBAs0zwcCRYS0du+YH17VXB9mbWr8mqZ+DVc=
 github.com/liangjunmo/logrushook v0.0.0-20230824065256-271ade96e8a0/go.mod h1:3f28BnKT6PtdrlSeGNDJqmis+93l0E/AGDv+Tsh+jDc=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
