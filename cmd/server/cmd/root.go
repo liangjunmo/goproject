@@ -31,6 +31,10 @@ var (
 	configFile string
 )
 
+const (
+	envKeyServerConfigFile = "GOPROJECT_SERVER_CONFIG_FILE"
+)
+
 func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 
@@ -38,7 +42,7 @@ func init() {
 
 	cobra.OnInitialize(func() {
 		if configFile == "" {
-			configFile = os.Getenv(envServerConfigFile)
+			configFile = os.Getenv(envKeyServerConfigFile)
 		}
 
 		loadConfig(configFile)
@@ -60,10 +64,6 @@ func Execute() {
 		log.Fatal(err)
 	}
 }
-
-const (
-	envServerConfigFile = "GOPROJECT_SERVER_CONFIG_FILE"
-)
 
 func loadConfig(configFile string) {
 	if configFile == "" {
