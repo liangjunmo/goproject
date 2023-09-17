@@ -36,9 +36,9 @@ const (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
-
 	rootCmd.SetVersionTemplate("goproject-server:" + version.Describe())
+
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 
 	cobra.OnInitialize(func() {
 		if configFile == "" {
