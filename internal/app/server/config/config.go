@@ -8,4 +8,6 @@ var (
 
 const (
 	TraceIdKey string = "TraceId"
+
+	GinCtxUserKey = "user_claims"
 )

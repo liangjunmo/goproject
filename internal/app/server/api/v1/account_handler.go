@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/liangjunmo/goproject/internal/app/codes"
+	"github.com/liangjunmo/goproject/internal/app/server/config"
 )
 
 type AccountHandler struct {
@@ -99,6 +100,6 @@ func (handler *AccountHandler) AuthMiddleware(c *gin.Context) {
 		return
 	}
 
-	c.Set("user_claims", claims)
+	c.Set(config.GinCtxUserKey, claims)
 	c.Next()
 }
