@@ -113,8 +113,9 @@ func initLog() {
 	logrus.AddHook(
 		logrushook.NewReportCallerLogrusHook(
 			[]logrus.Level{logrus.ErrorLevel, logrus.WarnLevel},
-			func(path string) string {
-				return strings.Replace(path, config.ProjectDir+"/", "", -1)
+			"file",
+			func(path string, line int) string {
+				return fmt.Sprintf("%s:%d", strings.Replace(path, config.ProjectDir+"/", "", -1), line)
 			},
 		),
 	)

@@ -213,6 +213,8 @@ github.com/liangjunmo/gotraceutil v0.0.0-20230901025137-b9a990e10f61 h1:26YOoKGU
 github.com/liangjunmo/gotraceutil v0.0.0-20230901025137-b9a990e10f61/go.mod h1:BamvbotI+p1svgJGXEGh3YDSq5SZJaWyCL6ejBwTfDA=
 github.com/liangjunmo/logrushook v0.0.0-20230824065256-271ade96e8a0 h1:b8tjqffTBAs0zwcCRYS0du+YH17VXB9mbWr8mqZ+DVc=
 github.com/liangjunmo/logrushook v0.0.0-20230824065256-271ade96e8a0/go.mod h1:3f28BnKT6PtdrlSeGNDJqmis+93l0E/AGDv+Tsh+jDc=
+github.com/liangjunmo/logrushook v0.0.0-20230917082328-21e6513feb87 h1:LN5ier0i06WtDWOkwaks5JYaoeSV7ZoirBj5itgIL4I=
+github.com/liangjunmo/logrushook v0.0.0-20230917082328-21e6513feb87/go.mod h1:3f28BnKT6PtdrlSeGNDJqmis+93l0E/AGDv+Tsh+jDc=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
 github.com/magiconair/properties v1.8.7/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/mattn/go-isatty v0.0.19 h1:JITubQf0MOLdlGRuRq+jtsDlekdYPia9ZFsB8h/APPA=
