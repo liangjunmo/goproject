@@ -38,7 +38,7 @@ func (req Request) Paginate(_total interface{}) Pagination {
 	)
 
 	if total%req.PageSize > 0 {
-		pageTotal += 1
+		pageTotal++
 	}
 
 	if pageTotal == 0 {

@@ -55,13 +55,13 @@ func (worker *ListUserWorker) handleTimer(ctx context.Context) {
 	}
 
 	for _, user := range users {
-		worker.output(ctx, user.Uid)
+		worker.output(ctx, user.UID)
 	}
 }
 
 func (worker *ListUserWorker) output(ctx context.Context, uid uint32) {
 	user, err := worker.userService.GetUser(ctx, userservice.GetUserRequest{
-		Uid: uid,
+		UID: uid,
 	})
 	if err != nil {
 		worker.log.WithContext(ctx).WithError(err).Error(err)

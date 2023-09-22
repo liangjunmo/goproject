@@ -8,9 +8,9 @@ import (
 
 	"github.com/liangjunmo/goproject/internal/codes"
 	"github.com/liangjunmo/goproject/internal/manager/usermanager"
-	"github.com/liangjunmo/goproject/internal/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
+	"github.com/liangjunmo/goproject/internal/service/userservice"
 )
 
 type UserHandler struct {
@@ -36,7 +36,7 @@ type ListUserResponse struct {
 }
 
 type ListUserData struct {
-	Uid        uint32 `json:"uid"`
+	UID        uint32 `json:"uid"`
 	Username   string `json:"username"`
 	CreateTime string `json:"create_time"`
 }
@@ -77,7 +77,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 
 	for _, user := range users {
 		resp.List = append(resp.List, ListUserData{
-			Uid:        user.Uid,
+			UID:        user.UID,
 			Username:   user.Username,
 			CreateTime: user.CreateTime.Format(timeutil.LayoutTime),
 		})
@@ -94,7 +94,7 @@ type SearchUserRequest struct {
 type SearchUserResponse []SearchUserData
 
 type SearchUserData struct {
-	Uid        uint32 `json:"uid"`
+	UID        uint32 `json:"uid"`
 	Username   string `json:"username"`
 	CreateTime string `json:"create_time"`
 }
@@ -133,7 +133,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 
 	for _, user := range users {
 		resp = append(resp, SearchUserData{
-			Uid:        user.Uid,
+			UID:        user.UID,
 			Username:   user.Username,
 			CreateTime: user.CreateTime.Format(timeutil.LayoutTime),
 		})
@@ -143,12 +143,12 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 }
 
 type GetUserRequest struct {
-	Uid      uint32 `json:"uid"`
+	UID      uint32 `json:"uid"`
 	Username string `json:"username"`
 }
 
 type GetUserResponse struct {
-	Uid        uint32 `json:"uid"`
+	UID        uint32 `json:"uid"`
 	Username   string `json:"username"`
 	CreateTime string `json:"create_time"`
 }
@@ -169,7 +169,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 	}
 
 	user, err := handler.userService.GetUser(ctx, userservice.GetUserRequest{
-		Uid:      req.Uid,
+		UID:      req.UID,
 		Username: req.Username,
 	})
 	if err != nil {
@@ -179,7 +179,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 	}
 
 	resp = GetUserResponse{
-		Uid:        user.Uid,
+		UID:        user.UID,
 		Username:   user.Username,
 		CreateTime: user.CreateTime.Format(timeutil.LayoutTime),
 	}
@@ -193,7 +193,7 @@ type CreateUserRequest struct {
 }
 
 type CreateUserResponse struct {
-	Uid uint32 `json:"uid"`
+	UID uint32 `json:"uid"`
 }
 
 func (handler *UserHandler) CreateUser(c *gin.Context) {
@@ -219,7 +219,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	resp = CreateUserResponse{
-		Uid: user.Uid,
+		UID: user.UID,
 	}
 
 	handler.Response(c, resp, nil)

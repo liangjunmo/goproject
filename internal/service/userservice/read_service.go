@@ -49,8 +49,8 @@ func (service *readService) SearchUser(ctx context.Context, req SearchUserReques
 func (service *readService) GetUser(ctx context.Context, req GetUserRequest) (types.User, error) {
 	db := service.db.WithContext(ctx).Model(&types.User{})
 
-	if req.Uid != 0 {
-		db = db.Where("id = ?", req.Uid)
+	if req.UID != 0 {
+		db = db.Where("id = ?", req.UID)
 	}
 
 	if req.Username != "" {
@@ -64,7 +64,7 @@ func (service *readService) GetUser(ctx context.Context, req GetUserRequest) (ty
 		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if user.Uid == 0 {
+	if user.UID == 0 {
 		return types.User{}, codes.UserNotFound
 	}
 

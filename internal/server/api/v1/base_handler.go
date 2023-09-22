@@ -42,7 +42,7 @@ func (handler *BaseHandler) buildResponseBody(c *gin.Context, data interface{}, 
 			body["error"] = err.Error()
 		}
 
-		body["request_id"] = c.Request.Context().Value(config.TraceIdKey)
+		body["request_id"] = c.Request.Context().Value(config.TraceIDKey)
 	}
 
 	return body

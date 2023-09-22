@@ -22,8 +22,8 @@ import (
 	gormlogger "gorm.io/gorm/logger"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/server/config"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
+	"github.com/liangjunmo/goproject/internal/server/config"
 	"github.com/liangjunmo/goproject/internal/version"
 )
 
@@ -97,7 +97,7 @@ func loadConfig(configFile string) {
 }
 
 func initTrace() {
-	gotraceutil.SetTraceIdKey(config.TraceIdKey)
+	gotraceutil.SetTraceIdKey(config.TraceIDKey)
 	gotraceutil.SetTraceIdGenerator(gotraceutil.DefaultTraceIdGenerator)
 }
 

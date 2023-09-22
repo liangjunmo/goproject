@@ -7,5 +7,5 @@ import (
 type UserJwtClaims struct {
 	jwt.StandardClaims
 
-	Uid uint32
+	UID uint32
 }

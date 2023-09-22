@@ -14,7 +14,7 @@ type SearchUserRequest struct {
 }
 
 type GetUserRequest struct {
-	Uid      uint32
+	UID      uint32
 	Username string
 }
 

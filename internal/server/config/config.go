@@ -7,7 +7,7 @@ var (
 )
 
 const (
-	TraceIdKey string = "TraceId"
+	TraceIDKey string = "TraceID"
 
 	GinCtxUserKey = "user_claims"
 )

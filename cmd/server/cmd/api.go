@@ -32,11 +32,11 @@ var apiCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		router := gin.Default()
 
-		release := buildApi(router)
+		release := buildAPI(router)
 		defer release()
 
 		server := &http.Server{
-			Addr:    config.Config.Api.Addr,
+			Addr:    config.Config.API.Addr,
 			Handler: router,
 		}
 
@@ -72,7 +72,7 @@ func migrateDb(db *gorm.DB) {
 	}
 }
 
-func buildApi(router *gin.Engine) (release func()) {
+func buildAPI(router *gin.Engine) (release func()) {
 	db := connectDb(config.Config.Debug)
 	migrateDb(db)
 
