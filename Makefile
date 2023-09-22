@@ -16,8 +16,8 @@ default:
 
 PHONY = build
 build:
-	@mkdir -p tmp
-	$(GO) build -race -ldflags ${GO_LDFLAGS} -o ./tmp/goproject-server ./cmd/server/
+	@mkdir -p bin
+	$(GO) build -race -ldflags ${GO_LDFLAGS} -o ./bin/goproject-server ./cmd/server/
 
 # deploy docker >>>
 
@@ -35,9 +35,9 @@ stop-dev-middleware:
 
 PHONY = run-dev-server
 run-dev-server: run-dev-middleware
-	@mkdir -p tmp
-	GOOS=linux GOARCH=amd64 $(GO) build -ldflags ${GO_LDFLAGS} -o tmp/goproject-server ./cmd/server/
-	chmod u+x ./tmp/goproject-server
+	@mkdir -p bin
+	GOOS=linux GOARCH=amd64 $(GO) build -ldflags ${GO_LDFLAGS} -o ./bin/goproject-server ./cmd/server/
+	chmod u+x ./bin/goproject-server
 	docker build -f ./deploy/docker/server/Dockerfile -t goproject-server:latest .
 	docker compose -f ./deploy/docker/server/docker-compose.yaml -p "goproject-dev-server" up -d
 	-docker rmi $(shell docker images -q goproject-server)
@@ -87,7 +87,7 @@ PHONY = redeploy-server-api
 redeploy-server-api: go-build-server docker-build-server docker-push-server delete-server-api delete-server-worker1 rewrite-yaml create-server-api create-server-worker1 recover-yaml
 
 go-build-server:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GO) build -ldflags ${GO_LDFLAGS} -o ./tmp/goproject-server ./cmd/server/
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GO) build -ldflags ${GO_LDFLAGS} -o ./bin/goproject-server ./cmd/server/
 
 docker-build-server:
 	docker build -f ./deploy/k8s/goproject/server/Dockerfile -t $(DOCKER_REPOSITORY_GOPROJECT)/goproject-server:$(TIME) .
