@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/liangjunmo/goproject/internal/app/codes"
-	"github.com/liangjunmo/goproject/internal/app/manager/usermanager"
-	"github.com/liangjunmo/goproject/internal/app/service/userservice"
+	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/manager/usermanager"
+	"github.com/liangjunmo/goproject/internal/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
 )

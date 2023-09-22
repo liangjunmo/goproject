@@ -14,11 +14,11 @@ import (
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/manager/usermanager"
-	v1 "github.com/liangjunmo/goproject/internal/app/server/api/v1"
-	"github.com/liangjunmo/goproject/internal/app/server/config"
-	"github.com/liangjunmo/goproject/internal/app/service/userservice"
-	"github.com/liangjunmo/goproject/internal/app/types"
+	"github.com/liangjunmo/goproject/internal/manager/usermanager"
+	v1 "github.com/liangjunmo/goproject/internal/server/api/v1"
+	"github.com/liangjunmo/goproject/internal/server/config"
+	"github.com/liangjunmo/goproject/internal/service/userservice"
+	"github.com/liangjunmo/goproject/internal/types"
 )
 
 func init() {

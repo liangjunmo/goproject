@@ -6,10 +6,10 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/codes"
-	"github.com/liangjunmo/goproject/internal/app/dbdata"
-	"github.com/liangjunmo/goproject/internal/app/redismutex"
-	"github.com/liangjunmo/goproject/internal/app/types"
+	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/dbdata"
+	"github.com/liangjunmo/goproject/internal/redismutex"
+	"github.com/liangjunmo/goproject/internal/types"
 )
 
 type BusinessService interface {

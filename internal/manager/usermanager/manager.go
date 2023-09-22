@@ -3,8 +3,8 @@ package usermanager
 import (
 	"context"
 
-	"github.com/liangjunmo/goproject/internal/app/service/userservice"
-	"github.com/liangjunmo/goproject/internal/app/types"
+	"github.com/liangjunmo/goproject/internal/service/userservice"
+	"github.com/liangjunmo/goproject/internal/types"
 )
 
 type Manager struct {

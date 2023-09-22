@@ -3,7 +3,7 @@ package redismutex
 import (
 	"github.com/go-redsync/redsync/v4"
 
-	"github.com/liangjunmo/goproject/internal/app/rediskey"
+	"github.com/liangjunmo/goproject/internal/rediskey"
 )
 
 func NewCreateUserMutex(redisSync *redsync.Redsync, username string) *redsync.Mutex {

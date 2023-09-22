@@ -21,8 +21,8 @@ import (
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 
-	"github.com/liangjunmo/goproject/internal/app/codes"
-	"github.com/liangjunmo/goproject/internal/app/server/config"
+	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/server/config"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
 	"github.com/liangjunmo/goproject/internal/version"
 )

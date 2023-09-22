@@ -9,10 +9,10 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/liangjunmo/goproject/internal/app/codes"
-	"github.com/liangjunmo/goproject/internal/app/redisdata"
-	"github.com/liangjunmo/goproject/internal/app/server/config"
-	"github.com/liangjunmo/goproject/internal/app/service/userservice"
+	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/redisdata"
+	"github.com/liangjunmo/goproject/internal/server/config"
+	"github.com/liangjunmo/goproject/internal/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/hashutil"
 )
 

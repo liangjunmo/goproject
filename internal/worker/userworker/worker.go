@@ -9,8 +9,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/app/service/userservice"
-	"github.com/liangjunmo/goproject/internal/app/types"
+	"github.com/liangjunmo/goproject/internal/service/userservice"
+	"github.com/liangjunmo/goproject/internal/types"
 )
 
 type ListUserWorker struct {

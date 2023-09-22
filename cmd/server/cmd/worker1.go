@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/liangjunmo/goproject/internal/app/service/userservice"
-	"github.com/liangjunmo/goproject/internal/app/worker/userworker"
+	"github.com/liangjunmo/goproject/internal/service/userservice"
+	"github.com/liangjunmo/goproject/internal/worker/userworker"
 )
 
 func init() {
