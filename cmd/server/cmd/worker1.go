@@ -38,7 +38,7 @@ var worker1Cmd = &cobra.Command{
 }
 
 func buildWorker1(ctx context.Context, wg *sync.WaitGroup) (release func()) {
-	db := connectDb(true)
+	db := connectDB(true)
 
 	redisClient := connectRedis()
 

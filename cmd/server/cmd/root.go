@@ -129,7 +129,7 @@ func initLog() {
 	)
 }
 
-func connectDb(debug bool) *gorm.DB {
+func connectDB(debug bool) *gorm.DB {
 	level := gormlogger.Warn
 
 	if debug {
@@ -138,10 +138,10 @@ func connectDb(debug bool) *gorm.DB {
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		config.Config.Db.User,
-		config.Config.Db.Password,
-		config.Config.Db.Addr,
-		config.Config.Db.Database,
+		config.Config.DB.User,
+		config.Config.DB.Password,
+		config.Config.DB.Addr,
+		config.Config.DB.Database,
 	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{

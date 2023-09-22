@@ -9,9 +9,9 @@ type Template struct {
 	Debug       bool                       `mapstructure:"debug"`
 	API         struct {
 		Addr   string `mapstructure:"addr"`
-		JwtKey string `mapstructure:"jwt_key"`
+		JwtKey string `mapstructure:"jwtKey"`
 	} `mapstructure:"api"`
-	Db struct {
+	DB struct {
 		Addr     string `mapstructure:"addr"`
 		User     string `mapstructure:"user"`
 		Password string `mapstructure:"password"`

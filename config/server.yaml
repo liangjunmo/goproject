@@ -2,7 +2,7 @@ environment:
 debug: false
 api:
   addr:
-  jwt_key:
+  jwtKey:
 db:
   addr:
   user:

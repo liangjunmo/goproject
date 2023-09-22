@@ -63,7 +63,7 @@ var apiCmd = &cobra.Command{
 	},
 }
 
-func migrateDb(db *gorm.DB) {
+func migrateDB(db *gorm.DB) {
 	err := db.AutoMigrate(
 		&types.User{},
 	)
@@ -73,8 +73,8 @@ func migrateDb(db *gorm.DB) {
 }
 
 func buildAPI(router *gin.Engine) (release func()) {
-	db := connectDb(config.Config.Debug)
-	migrateDb(db)
+	db := connectDB(config.Config.Debug)
+	migrateDB(db)
 
 	redisClient := connectRedis()
 
