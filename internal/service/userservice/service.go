@@ -6,8 +6,8 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/types"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
+	"github.com/liangjunmo/goproject/internal/types"
 )
 
 type Service interface {
