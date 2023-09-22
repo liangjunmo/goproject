@@ -97,8 +97,8 @@ func loadConfig(configFile string) {
 }
 
 func initTrace() {
-	gotraceutil.SetTraceIdKey(config.TraceIDKey)
-	gotraceutil.SetTraceIdGenerator(gotraceutil.DefaultTraceIdGenerator)
+	gotraceutil.SetTraceIDKey(config.TraceIDKey)
+	gotraceutil.SetTraceIDGenerator(gotraceutil.DefaultTraceIDGenerator)
 }
 
 func initLog() {

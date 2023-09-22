@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-redsync/redsync/v4 v4.8.1
 	github.com/liangjunmo/gocode v0.0.0-20230809024612-949d8ec656cb
-	github.com/liangjunmo/gotraceutil v0.0.0-20230901025137-b9a990e10f61
+	github.com/liangjunmo/gotraceutil v0.0.0-20230922114709-38365007ef86
 	github.com/liangjunmo/logrushook v0.0.0-20230917082328-21e6513feb87
 	github.com/redis/go-redis/v9 v9.0.2
 	github.com/sirupsen/logrus v1.9.3
