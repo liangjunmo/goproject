@@ -15,9 +15,9 @@ type AccountHandler struct {
 	accountComponent *AccountComponent
 }
 
-func NewAccountHandler(accountUseCase *AccountComponent) *AccountHandler {
+func NewAccountHandler(accountUseComponent *AccountComponent) *AccountHandler {
 	return &AccountHandler{
-		accountComponent: accountUseCase,
+		accountComponent: accountUseComponent,
 	}
 }
 
