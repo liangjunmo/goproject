@@ -121,7 +121,7 @@ func initLog() {
 	)
 
 	logrus.AddHook(
-		logrushook.NewTransErrorLevelLogrusHook(
+		logrushook.NewTransformErrorLevelLogrusHook(
 			logrus.WarnLevel,
 			[]gocode.Code{codes.InternalServerError},
 			true,
@@ -145,7 +145,7 @@ func connectDB(debug bool) *gorm.DB {
 	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: gotraceutil.NewGormLogger(
+		Logger: gotraceutil.NewGORMLogger(
 			gormlogger.Config{
 				SlowThreshold:             time.Millisecond * 100,
 				IgnoreRecordNotFoundError: true,
