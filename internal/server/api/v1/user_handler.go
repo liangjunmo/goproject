@@ -143,8 +143,8 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 }
 
 type GetUserRequest struct {
-	UID      uint32 `json:"uid"`
-	Username string `json:"username"`
+	UID      *uint32 `json:"uid"`
+	Username *string `json:"username"`
 }
 
 type GetUserResponse struct {

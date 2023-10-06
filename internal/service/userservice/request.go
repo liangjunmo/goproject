@@ -14,8 +14,8 @@ type SearchUserRequest struct {
 }
 
 type GetUserRequest struct {
-	UID      uint32
-	Username string
+	UID      *uint32
+	Username *string
 }
 
 type CreateUserRequest struct {

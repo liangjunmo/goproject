@@ -57,7 +57,7 @@ func (handler *AccountHandler) Login(c *gin.Context) {
 }
 
 type CreateTokenRequest struct {
-	Ticket string `json:"ticket"`
+	Ticket string `json:"ticket" binding:"required"`
 }
 
 type CreateTokenResponse struct {

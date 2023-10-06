@@ -49,12 +49,12 @@ func (service *readService) SearchUser(ctx context.Context, req SearchUserReques
 func (service *readService) GetUser(ctx context.Context, req GetUserRequest) (types.User, error) {
 	db := service.db.WithContext(ctx).Model(&types.User{})
 
-	if req.UID != 0 {
-		db = db.Where("id = ?", req.UID)
+	if req.UID != nil {
+		db = db.Where("id = ?", *req.UID)
 	}
 
-	if req.Username != "" {
-		db = db.Where("username = ?", req.Username)
+	if req.Username != nil {
+		db = db.Where("username = ?", *req.Username)
 	}
 
 	var user types.User
