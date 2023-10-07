@@ -60,7 +60,7 @@ func (worker *ListUserWorker) handleTimer(ctx context.Context) {
 }
 
 func (worker *ListUserWorker) output(ctx context.Context, uid uint32) {
-	user, err := worker.userService.GetUser(ctx, userservice.GetUserRequest{
+	user, err := worker.userService.GetUserByUID(ctx, userservice.GetUserByUIDRequest{
 		UID: uid,
 	})
 	if err != nil {

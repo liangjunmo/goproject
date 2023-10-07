@@ -60,7 +60,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		return LoginResponse{}, err
 	}
 
-	user, err := component.userService.GetUser(ctx, userservice.GetUserRequest{
+	user, err := component.userService.GetUserByUsername(ctx, userservice.GetUserByUsernameRequest{
 		Username: req.Username,
 	})
 	if err != nil {
@@ -89,7 +89,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 		return CreateTokenResponse{}, codes.AuthorizeInvalidTicket
 	}
 
-	user, err := component.userService.GetUser(ctx, userservice.GetUserRequest{
+	user, err := component.userService.GetUserByUID(ctx, userservice.GetUserByUIDRequest{
 		UID: uid,
 	})
 	if err != nil {
@@ -126,7 +126,7 @@ func (component *AccountComponent) Auth(ctx context.Context, token string) (*Use
 		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", codes.AuthorizeFailed)
 	}
 
-	_, err = component.userService.GetUser(ctx, userservice.GetUserRequest{
+	_, err = component.userService.GetUserByUID(ctx, userservice.GetUserByUIDRequest{
 		UID: claims.UID,
 	})
 	if err != nil {

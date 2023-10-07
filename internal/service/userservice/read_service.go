@@ -7,12 +7,14 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/dbdata"
 	"github.com/liangjunmo/goproject/internal/types"
 )
 
 type ReadService interface {
 	SearchUser(ctx context.Context, req SearchUserRequest) ([]types.User, error)
-	GetUser(ctx context.Context, req GetUserRequest) (types.User, error)
+	GetUserByUID(ctx context.Context, req GetUserByUIDRequest) (types.User, error)
+	GetUserByUsername(ctx context.Context, req GetUserByUsernameRequest) (types.User, error)
 }
 
 type readService struct {
@@ -46,25 +48,26 @@ func (service *readService) SearchUser(ctx context.Context, req SearchUserReques
 	return users, nil
 }
 
-func (service *readService) GetUser(ctx context.Context, req GetUserRequest) (types.User, error) {
-	db := service.db.WithContext(ctx).Model(&types.User{})
-
-	if req.UID != nil {
-		db = db.Where("id = ?", *req.UID)
-	}
-
-	if req.Username != nil {
-		db = db.Where("username = ?", *req.Username)
-	}
-
-	var user types.User
-
-	err := db.Limit(1).Scan(&user).Error
+func (service *readService) GetUserByUID(ctx context.Context, req GetUserByUIDRequest) (types.User, error) {
+	user, ok, err := dbdata.GetUserByUID(ctx, service.db, req.UID)
 	if err != nil {
-		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return types.User{}, err
 	}
 
-	if user.UID == 0 {
+	if !ok {
+		return types.User{}, codes.UserNotFound
+	}
+
+	return user, nil
+}
+
+func (service *readService) GetUserByUsername(ctx context.Context, req GetUserByUsernameRequest) (types.User, error) {
+	user, ok, err := dbdata.GetUserByUsername(ctx, service.db, req.Username)
+	if err != nil {
+		return types.User{}, err
+	}
+
+	if !ok {
 		return types.User{}, codes.UserNotFound
 	}
 

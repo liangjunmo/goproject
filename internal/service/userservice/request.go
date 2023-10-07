@@ -13,9 +13,12 @@ type SearchUserRequest struct {
 	Usernames []string
 }
 
-type GetUserRequest struct {
-	UID      *uint32
-	Username *string
+type GetUserByUIDRequest struct {
+	UID uint32
+}
+
+type GetUserByUsernameRequest struct {
+	Username string
 }
 
 type CreateUserRequest struct {

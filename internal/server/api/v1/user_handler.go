@@ -143,8 +143,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 }
 
 type GetUserRequest struct {
-	UID      *uint32 `json:"uid"`
-	Username *string `json:"username"`
+	UID uint32 `json:"uid" binding:"required"`
 }
 
 type GetUserResponse struct {
@@ -168,9 +167,8 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.GetUser(ctx, userservice.GetUserRequest{
-		UID:      req.UID,
-		Username: req.Username,
+	user, err := handler.userService.GetUserByUID(ctx, userservice.GetUserByUIDRequest{
+		UID: req.UID,
 	})
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)

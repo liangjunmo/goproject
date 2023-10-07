@@ -38,8 +38,12 @@ func (service *service) SearchUser(ctx context.Context, req SearchUserRequest) (
 	return service.readService.SearchUser(ctx, req)
 }
 
-func (service *service) GetUser(ctx context.Context, req GetUserRequest) (types.User, error) {
-	return service.readService.GetUser(ctx, req)
+func (service *service) GetUserByUID(ctx context.Context, req GetUserByUIDRequest) (types.User, error) {
+	return service.readService.GetUserByUID(ctx, req)
+}
+
+func (service *service) GetUserByUsername(ctx context.Context, req GetUserByUsernameRequest) (types.User, error) {
+	return service.readService.GetUserByUsername(ctx, req)
 }
 
 func (service *service) CreateUser(ctx context.Context, req CreateUserRequest) (types.User, error) {
