@@ -28,6 +28,10 @@ func newReadService(db *gorm.DB) ReadService {
 }
 
 func (service *readService) SearchUser(ctx context.Context, req SearchUserRequest) ([]types.User, error) {
+	if len(req.Uids) == 0 && len(req.Usernames) == 0 {
+		return nil, nil
+	}
+
 	db := service.db.WithContext(ctx).Model(&types.User{})
 
 	if len(req.Uids) != 0 {
