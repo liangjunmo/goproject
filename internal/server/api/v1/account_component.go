@@ -145,7 +145,7 @@ func (component *AccountComponent) generateLoginTicket(uid uint32) string {
 func (component *AccountComponent) generateJwtToken(claims jwt.Claims) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	token, err := jwtToken.SignedString([]byte(config.Config.API.JwtKey))
+	token, err := jwtToken.SignedString([]byte(config.Config.API.JWTKey))
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
@@ -157,7 +157,7 @@ func (component *AccountComponent) parseJwtToken(token string, claims jwt.Claims
 	var jwtToken *jwt.Token
 
 	jwtToken, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.Config.API.JwtKey), nil
+		return []byte(config.Config.API.JWTKey), nil
 	})
 	if err != nil {
 		return jwt.Claims(nil), fmt.Errorf("%w: %v", codes.AuthorizeInvalidToken, err)
