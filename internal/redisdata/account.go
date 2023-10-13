@@ -3,20 +3,18 @@ package redisdata
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cast"
 
-	"github.com/liangjunmo/goproject/internal/codes"
 	"github.com/liangjunmo/goproject/internal/rediskey"
 )
 
 func GetLoginFailedCount(ctx context.Context, redisClient *redis.Client, username string) (uint32, error) {
 	val, err := redisClient.Get(ctx, rediskey.LoginFailedCount(username)).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
-		return 0, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return 0, err
 	}
 
 	return cast.ToUint32(val), nil
@@ -30,7 +28,7 @@ func SetLoginFailedCount(ctx context.Context, redisClient *redis.Client, usernam
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return err
 	}
 
 	return nil
@@ -39,7 +37,7 @@ func SetLoginFailedCount(ctx context.Context, redisClient *redis.Client, usernam
 func DelLoginFailedCount(ctx context.Context, redisClient *redis.Client, username string) error {
 	err := redisClient.Del(ctx, rediskey.LoginFailedCount(username)).Err()
 	if err != nil {
-		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return err
 	}
 
 	return nil
@@ -48,7 +46,7 @@ func DelLoginFailedCount(ctx context.Context, redisClient *redis.Client, usernam
 func GetLoginTicket(ctx context.Context, redisClient *redis.Client, ticket string) (uint32, bool, error) {
 	val, err := redisClient.Get(ctx, rediskey.LoginTicket(ticket)).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
-		return 0, false, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return 0, false, err
 	}
 
 	if errors.Is(err, redis.Nil) {
@@ -61,7 +59,7 @@ func GetLoginTicket(ctx context.Context, redisClient *redis.Client, ticket strin
 func SetLoginTicket(ctx context.Context, redisClient *redis.Client, ticket string, uid uint32, expiration time.Duration) error {
 	err := redisClient.Set(ctx, rediskey.LoginTicket(ticket), uid, expiration).Err()
 	if err != nil {
-		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return err
 	}
 
 	return nil

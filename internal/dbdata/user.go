@@ -2,11 +2,9 @@ package dbdata
 
 import (
 	"context"
-	"fmt"
 
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/codes"
 	"github.com/liangjunmo/goproject/internal/types"
 )
 
@@ -15,7 +13,7 @@ func GetUserByUID(ctx context.Context, db *gorm.DB, uid uint32) (types.User, boo
 
 	err := db.WithContext(ctx).Model(&types.User{}).Where("id = ?", uid).Limit(1).Scan(&user).Error
 	if err != nil {
-		return types.User{}, false, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return types.User{}, false, err
 	}
 
 	if user.UID == 0 {
@@ -30,7 +28,7 @@ func GetUserByUsername(ctx context.Context, db *gorm.DB, username string) (types
 
 	err := db.WithContext(ctx).Model(&types.User{}).Where("username = ?", username).Limit(1).Scan(&user).Error
 	if err != nil {
-		return types.User{}, false, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return types.User{}, false, err
 	}
 
 	if user.UID == 0 {
@@ -43,7 +41,7 @@ func GetUserByUsername(ctx context.Context, db *gorm.DB, username string) (types
 func CreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
 	err := db.WithContext(ctx).Create(user).Error
 	if err != nil {
-		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return err
 	}
 
 	return nil
@@ -52,7 +50,7 @@ func CreateUser(ctx context.Context, db *gorm.DB, user *types.User) error {
 func UpdateUserByUID(ctx context.Context, db *gorm.DB, uid uint32, user types.User) error {
 	err := db.WithContext(ctx).Model(&types.User{}).Where("id = ?", uid).Limit(1).Updates(&user).Error
 	if err != nil {
-		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return err
 	}
 
 	return nil

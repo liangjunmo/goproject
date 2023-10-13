@@ -55,7 +55,7 @@ func (service *readService) SearchUser(ctx context.Context, req SearchUserReques
 func (service *readService) GetUserByUID(ctx context.Context, req GetUserByUIDRequest) (types.User, error) {
 	user, ok, err := dbdata.GetUserByUID(ctx, service.db, req.UID)
 	if err != nil {
-		return types.User{}, err
+		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if !ok {
@@ -68,7 +68,7 @@ func (service *readService) GetUserByUID(ctx context.Context, req GetUserByUIDRe
 func (service *readService) GetUserByUsername(ctx context.Context, req GetUserByUsernameRequest) (types.User, error) {
 	user, ok, err := dbdata.GetUserByUsername(ctx, service.db, req.Username)
 	if err != nil {
-		return types.User{}, err
+		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if !ok {

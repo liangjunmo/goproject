@@ -2,6 +2,7 @@ package userservice
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-redsync/redsync/v4"
 	"gorm.io/gorm"
@@ -40,7 +41,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 
 	user, ok, err := dbdata.GetUserByUsername(ctx, service.db, req.Username)
 	if err != nil {
-		return types.User{}, err
+		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if ok {
@@ -54,7 +55,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 
 	err = dbdata.CreateUser(ctx, service.db, &user)
 	if err != nil {
-		return types.User{}, err
+		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return user, nil
@@ -63,7 +64,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 func (service *businessService) ValidatePassword(ctx context.Context, req ValidatePasswordRequest) error {
 	user, ok, err := dbdata.GetUserByUsername(ctx, service.db, req.Username)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if !ok {

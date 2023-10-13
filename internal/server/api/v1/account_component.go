@@ -31,7 +31,7 @@ func NewAccountComponent(redisClient *redis.Client, userService userservice.Serv
 func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) (LoginResponse, error) {
 	count, err := redisdata.GetLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
-		return LoginResponse{}, err
+		return LoginResponse{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if count >= 5 {
@@ -47,7 +47,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 	if err != nil {
 		e := redisdata.SetLoginFailedCount(ctx, component.redisClient, req.Username)
 		if e != nil {
-			return LoginResponse{}, e
+			return LoginResponse{}, fmt.Errorf("%w: %v", codes.InternalServerError, e)
 		}
 
 		return LoginResponse{
@@ -57,7 +57,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 
 	err = redisdata.DelLoginFailedCount(ctx, component.redisClient, req.Username)
 	if err != nil {
-		return LoginResponse{}, err
+		return LoginResponse{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	user, err := component.userService.GetUserByUsername(ctx, userservice.GetUserByUsernameRequest{
@@ -71,7 +71,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 
 	err = redisdata.SetLoginTicket(ctx, component.redisClient, ticket, user.UID, time.Minute)
 	if err != nil {
-		return LoginResponse{}, err
+		return LoginResponse{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	return LoginResponse{
@@ -82,7 +82,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTokenRequest) (CreateTokenResponse, error) {
 	uid, ok, err := redisdata.GetLoginTicket(ctx, component.redisClient, req.Ticket)
 	if err != nil {
-		return CreateTokenResponse{}, err
+		return CreateTokenResponse{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if !ok {
