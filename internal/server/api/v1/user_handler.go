@@ -10,18 +10,15 @@ import (
 	"github.com/liangjunmo/goproject/internal/manager/usermanager"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
-	"github.com/liangjunmo/goproject/internal/service/userservice"
 )
 
 type UserHandler struct {
 	*BaseHandler
-	userService userservice.Service
 	userManager *usermanager.Manager
 }
 
-func NewUserHandler(userService userservice.Service, userManager *usermanager.Manager) *UserHandler {
+func NewUserHandler(userManager *usermanager.Manager) *UserHandler {
 	return &UserHandler{
-		userService: userService,
 		userManager: userManager,
 	}
 }
@@ -56,9 +53,7 @@ func (handler *UserHandler) ListUser(c *gin.Context) {
 		return
 	}
 
-	p, users, err := handler.userService.ListUser(ctx, userservice.ListUserRequest{
-		PaginationRequest: req.Request,
-	})
+	p, users, err := handler.userManager.ListUser(ctx, req.Request)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
@@ -114,10 +109,7 @@ func (handler *UserHandler) SearchUser(c *gin.Context) {
 		return
 	}
 
-	users, err := handler.userService.SearchUser(ctx, userservice.SearchUserRequest{
-		Uids:      req.Uids,
-		Usernames: req.Usernames,
-	})
+	users, err := handler.userManager.SearchUser(ctx, req.Uids, req.Usernames)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)
@@ -167,9 +159,7 @@ func (handler *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.GetUserByUID(ctx, userservice.GetUserByUIDRequest{
-		UID: req.UID,
-	})
+	user, err := handler.userManager.GetUserByUID(ctx, req.UID)
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.Response(c, nil, err)

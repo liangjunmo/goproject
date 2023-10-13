@@ -10,21 +10,21 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/manager/usermanager"
 	"github.com/liangjunmo/goproject/internal/pkg/hashutil"
 	"github.com/liangjunmo/goproject/internal/redisdata"
 	"github.com/liangjunmo/goproject/internal/server/config"
-	"github.com/liangjunmo/goproject/internal/service/userservice"
 )
 
 type AccountComponent struct {
 	redisClient *redis.Client
-	userService userservice.Service
+	userManager *usermanager.Manager
 }
 
-func NewAccountComponent(redisClient *redis.Client, userService userservice.Service) *AccountComponent {
+func NewAccountComponent(redisClient *redis.Client, userManager *usermanager.Manager) *AccountComponent {
 	return &AccountComponent{
 		redisClient: redisClient,
-		userService: userService,
+		userManager: userManager,
 	}
 }
 
@@ -40,10 +40,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		}, codes.LoginFailedReachLimit
 	}
 
-	err = component.userService.ValidatePassword(ctx, userservice.ValidatePasswordRequest{
-		Username: req.Username,
-		Password: req.Password,
-	})
+	err = component.userManager.ValidatePassword(ctx, req.Username, req.Password)
 	if err != nil {
 		e := redisdata.SetLoginFailedCount(ctx, component.redisClient, req.Username)
 		if e != nil {
@@ -60,9 +57,7 @@ func (component *AccountComponent) Login(ctx context.Context, req LoginRequest) 
 		return LoginResponse{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	user, err := component.userService.GetUserByUsername(ctx, userservice.GetUserByUsernameRequest{
-		Username: req.Username,
-	})
+	user, err := component.userManager.GetUserByUsername(ctx, req.Username)
 	if err != nil {
 		return LoginResponse{}, err
 	}
@@ -89,9 +84,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 		return CreateTokenResponse{}, codes.AuthorizeInvalidTicket
 	}
 
-	user, err := component.userService.GetUserByUID(ctx, userservice.GetUserByUIDRequest{
-		UID: uid,
-	})
+	user, err := component.userManager.GetUserByUID(ctx, uid)
 	if err != nil {
 		return CreateTokenResponse{}, err
 	}
@@ -126,9 +119,7 @@ func (component *AccountComponent) Auth(ctx context.Context, token string) (*Use
 		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", codes.AuthorizeFailed)
 	}
 
-	_, err = component.userService.GetUserByUID(ctx, userservice.GetUserByUIDRequest{
-		UID: claims.UID,
-	})
+	_, err = component.userManager.GetUserByUID(ctx, claims.UID)
 	if err != nil {
 		return nil, err
 	}

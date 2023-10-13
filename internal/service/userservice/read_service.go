@@ -14,7 +14,6 @@ import (
 type ReadService interface {
 	SearchUser(ctx context.Context, req SearchUserRequest) ([]types.User, error)
 	GetUserByUID(ctx context.Context, req GetUserByUIDRequest) (types.User, error)
-	GetUserByUsername(ctx context.Context, req GetUserByUsernameRequest) (types.User, error)
 }
 
 type readService struct {
@@ -28,18 +27,14 @@ func newReadService(db *gorm.DB) ReadService {
 }
 
 func (service *readService) SearchUser(ctx context.Context, req SearchUserRequest) ([]types.User, error) {
-	if len(req.Uids) == 0 && len(req.Usernames) == 0 {
+	if len(req.Uids) == 0 {
 		return nil, nil
 	}
 
 	db := service.db.WithContext(ctx).Model(&types.User{})
 
 	if len(req.Uids) != 0 {
-		db = db.Where("id in (?)", req.Uids)
-	}
-
-	if len(req.Usernames) != 0 {
-		db = db.Where("username in (?)", req.Usernames)
+		db = db.Where("uid in (?)", req.Uids)
 	}
 
 	var users []types.User
@@ -54,19 +49,6 @@ func (service *readService) SearchUser(ctx context.Context, req SearchUserReques
 
 func (service *readService) GetUserByUID(ctx context.Context, req GetUserByUIDRequest) (types.User, error) {
 	user, ok, err := dbdata.GetUserByUID(ctx, service.db, req.UID)
-	if err != nil {
-		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
-	}
-
-	if !ok {
-		return types.User{}, codes.UserNotFound
-	}
-
-	return user, nil
-}
-
-func (service *readService) GetUserByUsername(ctx context.Context, req GetUserByUsernameRequest) (types.User, error) {
-	user, ok, err := dbdata.GetUserByUsername(ctx, service.db, req.Username)
 	if err != nil {
 		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}

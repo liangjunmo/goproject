@@ -17,6 +17,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/manager/usermanager"
 	v1 "github.com/liangjunmo/goproject/internal/server/api/v1"
 	"github.com/liangjunmo/goproject/internal/server/config"
+	"github.com/liangjunmo/goproject/internal/service/usercenterservice"
 	"github.com/liangjunmo/goproject/internal/service/userservice"
 	"github.com/liangjunmo/goproject/internal/types"
 )
@@ -65,6 +66,7 @@ var apiCmd = &cobra.Command{
 
 func migrateDB(db *gorm.DB) {
 	err := db.AutoMigrate(
+		&types.UserCenterUser{},
 		&types.User{},
 	)
 	if err != nil {
@@ -87,12 +89,13 @@ func buildAPI(router *gin.Engine) (release func()) {
 
 	redisSync := newRedisSync(redisClient)
 
+	userCenterService := usercenterservice.NewService(db, redisSync)
 	userService := userservice.NewService(db, redisSync)
-	userManager := usermanager.NewManager(userService)
+	userManager := usermanager.NewManager(userCenterService, userService)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
-	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountComponent(redisClient, userService))
-	v1UserHandler := v1.NewUserHandler(userService, userManager)
+	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountComponent(redisClient, userManager))
+	v1UserHandler := v1.NewUserHandler(userManager)
 
 	router.GET("/health", v1DefaultHandler.Health)
 

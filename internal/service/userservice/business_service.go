@@ -15,7 +15,6 @@ import (
 
 type BusinessService interface {
 	CreateUser(ctx context.Context, req CreateUserRequest) (types.User, error)
-	ValidatePassword(ctx context.Context, req ValidatePasswordRequest) error
 }
 
 type businessService struct {
@@ -31,7 +30,7 @@ func newBusinessService(db *gorm.DB, redisSync *redsync.Redsync) BusinessService
 }
 
 func (service *businessService) CreateUser(ctx context.Context, req CreateUserRequest) (types.User, error) {
-	mutex := redismutex.NewCreateUserMutex(service.redisSync, req.Username)
+	mutex := redismutex.NewCreateUserMutex(service.redisSync, req.UID)
 
 	err := mutex.Lock()
 	if err != nil {
@@ -39,7 +38,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 	}
 	defer mutex.Unlock()
 
-	user, ok, err := dbdata.GetUserByUsername(ctx, service.db, req.Username)
+	user, ok, err := dbdata.GetUserByUID(ctx, service.db, req.UID)
 	if err != nil {
 		return types.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
@@ -49,8 +48,7 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 	}
 
 	user = types.User{
-		Username: req.Username,
-		Password: cryptPassword(req.Password),
+		UID: req.UID,
 	}
 
 	err = dbdata.CreateUser(ctx, service.db, &user)
@@ -59,21 +57,4 @@ func (service *businessService) CreateUser(ctx context.Context, req CreateUserRe
 	}
 
 	return user, nil
-}
-
-func (service *businessService) ValidatePassword(ctx context.Context, req ValidatePasswordRequest) error {
-	user, ok, err := dbdata.GetUserByUsername(ctx, service.db, req.Username)
-	if err != nil {
-		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
-	}
-
-	if !ok {
-		return codes.UserNotFound
-	}
-
-	if !comparePassword(user.Password, req.Password) {
-		return codes.LoginPasswordWrong
-	}
-
-	return nil
 }

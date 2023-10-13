@@ -42,14 +42,6 @@ func (service *service) GetUserByUID(ctx context.Context, req GetUserByUIDReques
 	return service.readService.GetUserByUID(ctx, req)
 }
 
-func (service *service) GetUserByUsername(ctx context.Context, req GetUserByUsernameRequest) (types.User, error) {
-	return service.readService.GetUserByUsername(ctx, req)
-}
-
 func (service *service) CreateUser(ctx context.Context, req CreateUserRequest) (types.User, error) {
 	return service.businessService.CreateUser(ctx, req)
-}
-
-func (service *service) ValidatePassword(ctx context.Context, req ValidatePasswordRequest) error {
-	return service.businessService.ValidatePassword(ctx, req)
 }

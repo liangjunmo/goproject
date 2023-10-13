@@ -9,24 +9,13 @@ type ListUserRequest struct {
 }
 
 type SearchUserRequest struct {
-	Uids      []uint32
-	Usernames []string
+	Uids []uint32
 }
 
 type GetUserByUIDRequest struct {
 	UID uint32
 }
 
-type GetUserByUsernameRequest struct {
-	Username string
-}
-
 type CreateUserRequest struct {
-	Username string
-	Password string
-}
-
-type ValidatePasswordRequest struct {
-	Username string
-	Password string
+	UID uint32
 }
