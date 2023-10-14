@@ -1,4 +1,4 @@
-package usermanager
+package manager
 
 import (
 	"context"
@@ -13,19 +13,19 @@ import (
 	"github.com/liangjunmo/goproject/internal/types"
 )
 
-type Manager struct {
+type UserManager struct {
 	userCenterService usercenterservice.Service
 	userService       userservice.Service
 }
 
-func NewManager(userCenterService usercenterservice.Service, userService userservice.Service) *Manager {
-	return &Manager{
+func NewUserManager(userCenterService usercenterservice.Service, userService userservice.Service) *UserManager {
+	return &UserManager{
 		userCenterService: userCenterService,
 		userService:       userService,
 	}
 }
 
-func (manager *Manager) ListUser(ctx context.Context, preq pagination.Request) (pagination.Pagination, []types.UserDetail, error) {
+func (manager *UserManager) ListUser(ctx context.Context, preq pagination.Request) (pagination.Pagination, []types.UserDetail, error) {
 	p, users, err := manager.userService.ListUser(ctx, userservice.ListUserRequest{
 		PaginationRequest: preq,
 	})
@@ -63,7 +63,7 @@ func (manager *Manager) ListUser(ctx context.Context, preq pagination.Request) (
 	return p, userDetailList, nil
 }
 
-func (manager *Manager) SearchUser(ctx context.Context, uids []uint32, usernames []string) ([]types.UserDetail, error) {
+func (manager *UserManager) SearchUser(ctx context.Context, uids []uint32, usernames []string) ([]types.UserDetail, error) {
 	if len(uids) == 0 && len(usernames) == 0 {
 		return nil, nil
 	}
@@ -120,7 +120,7 @@ func (manager *Manager) SearchUser(ctx context.Context, uids []uint32, usernames
 	return userDetailList, nil
 }
 
-func (manager *Manager) GetUserByUID(ctx context.Context, uid uint32) (types.UserDetail, error) {
+func (manager *UserManager) GetUserByUID(ctx context.Context, uid uint32) (types.UserDetail, error) {
 	ucUser, err := manager.userCenterService.GetUserByUID(ctx, usercenterservice.GetUserByUIDRequest{
 		UID: uid,
 	})
@@ -144,7 +144,7 @@ func (manager *Manager) GetUserByUID(ctx context.Context, uid uint32) (types.Use
 	}, nil
 }
 
-func (manager *Manager) GetUserByUsername(ctx context.Context, username string) (types.UserDetail, error) {
+func (manager *UserManager) GetUserByUsername(ctx context.Context, username string) (types.UserDetail, error) {
 	ucUser, err := manager.userCenterService.GetUserByUsername(ctx, usercenterservice.GetUserByUsernameRequest{
 		Username: username,
 	})
@@ -168,7 +168,7 @@ func (manager *Manager) GetUserByUsername(ctx context.Context, username string) 
 	}, nil
 }
 
-func (manager *Manager) CreateUser(ctx context.Context, username, password string) (types.User, error) {
+func (manager *UserManager) CreateUser(ctx context.Context, username, password string) (types.User, error) {
 	ucUser, err := manager.userCenterService.CreateUser(ctx, usercenterservice.CreateUserRequest{
 		Username: username,
 		Password: password,
@@ -187,7 +187,7 @@ func (manager *Manager) CreateUser(ctx context.Context, username, password strin
 	return user, nil
 }
 
-func (manager *Manager) ValidatePassword(ctx context.Context, username, password string) error {
+func (manager *UserManager) ValidatePassword(ctx context.Context, username, password string) error {
 	err := manager.userCenterService.ValidatePassword(ctx, usercenterservice.ValidatePasswordRequest{
 		Username: username,
 		Password: password,

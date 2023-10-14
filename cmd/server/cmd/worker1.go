@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/liangjunmo/goproject/internal/service/userservice"
-	"github.com/liangjunmo/goproject/internal/worker/userworker"
+	"github.com/liangjunmo/goproject/internal/worker"
 )
 
 func init() {
@@ -54,7 +54,7 @@ func buildWorker1(ctx context.Context, wg *sync.WaitGroup) (release func()) {
 	userService := userservice.NewService(db, redisSync)
 
 	wg.Add(1)
-	go userworker.NewListUserWorker(db, userService).Run(ctx, wg)
+	go worker.NewListUserWorker(db, userService).Run(ctx, wg)
 
 	return
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/manager/usermanager"
+	"github.com/liangjunmo/goproject/internal/manager"
 	"github.com/liangjunmo/goproject/internal/pkg/hashutil"
 	"github.com/liangjunmo/goproject/internal/redisdata"
 	"github.com/liangjunmo/goproject/internal/server/config"
@@ -18,10 +18,10 @@ import (
 
 type AccountComponent struct {
 	redisClient *redis.Client
-	userManager *usermanager.Manager
+	userManager *manager.UserManager
 }
 
-func NewAccountComponent(redisClient *redis.Client, userManager *usermanager.Manager) *AccountComponent {
+func NewAccountComponent(redisClient *redis.Client, userManager *manager.UserManager) *AccountComponent {
 	return &AccountComponent{
 		redisClient: redisClient,
 		userManager: userManager,

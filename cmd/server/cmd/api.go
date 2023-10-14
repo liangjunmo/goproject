@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/manager/usermanager"
+	"github.com/liangjunmo/goproject/internal/manager"
 	v1 "github.com/liangjunmo/goproject/internal/server/api/v1"
 	"github.com/liangjunmo/goproject/internal/server/config"
 	"github.com/liangjunmo/goproject/internal/service/usercenterservice"
@@ -91,7 +91,7 @@ func buildAPI(router *gin.Engine) (release func()) {
 
 	userCenterService := usercenterservice.NewService(db, redisSync)
 	userService := userservice.NewService(db, redisSync)
-	userManager := usermanager.NewManager(userCenterService, userService)
+	userManager := manager.NewUserManager(userCenterService, userService)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
 	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountComponent(redisClient, userManager))

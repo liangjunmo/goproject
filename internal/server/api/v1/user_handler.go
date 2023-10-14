@@ -7,17 +7,17 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/manager/usermanager"
+	"github.com/liangjunmo/goproject/internal/manager"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/pkg/timeutil"
 )
 
 type UserHandler struct {
 	*BaseHandler
-	userManager *usermanager.Manager
+	userManager *manager.UserManager
 }
 
-func NewUserHandler(userManager *usermanager.Manager) *UserHandler {
+func NewUserHandler(userManager *manager.UserManager) *UserHandler {
 	return &UserHandler{
 		userManager: userManager,
 	}
