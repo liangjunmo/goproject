@@ -1,4 +1,4 @@
-package userhelper
+package helper
 
 import (
 	"github.com/liangjunmo/goproject/internal/types"

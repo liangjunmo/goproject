@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/helper/userhelper"
+	"github.com/liangjunmo/goproject/internal/helper"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 	"github.com/liangjunmo/goproject/internal/service/usercenterservice"
 	"github.com/liangjunmo/goproject/internal/service/userservice"
@@ -37,7 +37,7 @@ func (manager *Manager) ListUser(ctx context.Context, preq pagination.Request) (
 		return pagination.Pagination{}, nil, nil
 	}
 
-	uids := userhelper.FetchUserUids(users)
+	uids := helper.FetchUserUids(users)
 
 	ucUsers, err := manager.userCenterService.SearchUser(ctx, usercenterservice.SearchUserRequest{
 		Uids: uids,
@@ -46,7 +46,7 @@ func (manager *Manager) ListUser(ctx context.Context, preq pagination.Request) (
 		return pagination.Pagination{}, nil, err
 	}
 
-	ucUserMap := userhelper.UserCenterUserToMap(ucUsers)
+	ucUserMap := helper.UserCenterUserToMap(ucUsers)
 
 	userDetailList := make([]types.UserDetail, 0, len(users))
 
@@ -76,7 +76,7 @@ func (manager *Manager) SearchUser(ctx context.Context, uids []uint32, usernames
 			return nil, err
 		}
 
-		uids = userhelper.FetchUserCenterUserUids(ucUsers)
+		uids = helper.FetchUserCenterUserUids(ucUsers)
 	}
 
 	if len(uids) == 0 {
@@ -94,7 +94,7 @@ func (manager *Manager) SearchUser(ctx context.Context, uids []uint32, usernames
 		return nil, nil
 	}
 
-	uids = userhelper.FetchUserUids(users)
+	uids = helper.FetchUserUids(users)
 
 	ucUsers, err := manager.userCenterService.SearchUser(ctx, usercenterservice.SearchUserRequest{
 		Uids: uids,
@@ -103,7 +103,7 @@ func (manager *Manager) SearchUser(ctx context.Context, uids []uint32, usernames
 		return nil, err
 	}
 
-	ucUserMap := userhelper.UserCenterUserToMap(ucUsers)
+	ucUserMap := helper.UserCenterUserToMap(ucUsers)
 
 	userDetailList := make([]types.UserDetail, 0, len(users))
 
