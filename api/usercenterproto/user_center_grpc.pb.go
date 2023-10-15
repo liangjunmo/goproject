@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v4.24.4
-// source: api/usercenterproto/usercenter.proto
+// source: api/usercenterproto/user_center.proto
 
 package usercenterproto
 
@@ -245,5 +245,5 @@ var UserCenter_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/usercenterproto/usercenter.proto",
+	Metadata: "api/usercenterproto/user_center.proto",
 }
