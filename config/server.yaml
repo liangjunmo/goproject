@@ -3,6 +3,9 @@ debug: false
 api:
   addr:
   jwtKey:
+  userCenterAddr:
+userCenter:
+  addr:
 db:
   addr:
   user:

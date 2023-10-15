@@ -12,12 +12,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gotraceutil"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"gorm.io/gorm"
 
+	"github.com/liangjunmo/goproject/api/usercenterproto"
 	"github.com/liangjunmo/goproject/internal/manager"
 	v1 "github.com/liangjunmo/goproject/internal/server/api/v1"
 	"github.com/liangjunmo/goproject/internal/server/config"
-	"github.com/liangjunmo/goproject/internal/service/usercenterservice"
+	"github.com/liangjunmo/goproject/internal/server/usercenter"
 	"github.com/liangjunmo/goproject/internal/service/userservice"
 	"github.com/liangjunmo/goproject/internal/types"
 )
@@ -80,18 +83,27 @@ func buildAPI(router *gin.Engine) (release func()) {
 
 	redisClient := connectRedis()
 
+	userCenterConn, err := grpc.Dial(config.Config.API.UserCenterAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	release = func() {
 		db, _ := db.DB()
 		_ = db.Close()
 
 		_ = redisClient.Close()
+
+		userCenterConn.Close()
 	}
 
 	redisSync := newRedisSync(redisClient)
 
-	userCenterService := usercenterservice.NewService(db, redisSync)
+	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
+	userCenterServiceAdapter := usercenter.NewAdapter(userCenterClient)
+
 	userService := userservice.NewService(db, redisSync)
-	userManager := manager.NewUserManager(userCenterService, userService)
+	userManager := manager.NewUserManager(userCenterServiceAdapter, userService)
 
 	v1DefaultHandler := v1.NewDefaultHandler()
 	v1AccountHandler := v1.NewAccountHandler(v1.NewAccountComponent(redisClient, userManager))

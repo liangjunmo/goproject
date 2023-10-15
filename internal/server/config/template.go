@@ -8,9 +8,13 @@ type Template struct {
 	Environment configtemplate.Environment `mapstructure:"environment"`
 	Debug       bool                       `mapstructure:"debug"`
 	API         struct {
-		Addr   string `mapstructure:"addr"`
-		JWTKey string `mapstructure:"jwtKey"`
+		Addr           string `mapstructure:"addr"`
+		JWTKey         string `mapstructure:"jwtKey"`
+		UserCenterAddr string `mapstructure:"userCenterAddr"`
 	} `mapstructure:"api"`
+	UserCenter struct {
+		Addr string `mapstructure:"addr"`
+	} `mapstructure:"userCenter"`
 	DB struct {
 		Addr     string `mapstructure:"addr"`
 		User     string `mapstructure:"user"`
