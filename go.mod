@@ -6,7 +6,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-redsync/redsync/v4 v4.8.1
-	github.com/liangjunmo/gocode v0.0.0-20231006074235-883c936e52eb
+	github.com/liangjunmo/gocode v0.0.0-20231015130010-17132c747656
 	github.com/liangjunmo/gotraceutil v0.0.0-20231006084600-02ad619f1cd6
 	github.com/liangjunmo/logrushook v0.0.0-20231007064401-d2d299ff5b3d
 	github.com/redis/go-redis/v9 v9.0.2

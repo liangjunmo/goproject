@@ -28,7 +28,7 @@ func (server *Server) SearchUser(ctx context.Context, req *usercenterproto.Searc
 	if err != nil {
 		return &usercenterproto.SearchUserReply{
 			Error: &usercenterproto.Error{
-				Code:    gocode.Parse(err).Error(),
+				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
 		}, nil
@@ -58,7 +58,7 @@ func (server *Server) GetUserByUID(ctx context.Context, req *usercenterproto.Get
 	if err != nil {
 		return &usercenterproto.GetUserByUIDReply{
 			Error: &usercenterproto.Error{
-				Code:    gocode.Parse(err).Error(),
+				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
 		}, nil
@@ -82,7 +82,7 @@ func (server *Server) GetUserByUsername(ctx context.Context, req *usercenterprot
 	if err != nil {
 		return &usercenterproto.GetUserByUsernameReply{
 			Error: &usercenterproto.Error{
-				Code:    gocode.Parse(err).Error(),
+				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
 		}, nil
@@ -107,7 +107,7 @@ func (server *Server) CreateUser(ctx context.Context, req *usercenterproto.Creat
 	if err != nil {
 		return &usercenterproto.CreateUserReply{
 			Error: &usercenterproto.Error{
-				Code:    gocode.Parse(err).Error(),
+				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
 		}, nil

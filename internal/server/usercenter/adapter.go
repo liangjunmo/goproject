@@ -34,7 +34,7 @@ func (adapter *Adapter) SearchUser(ctx context.Context, req usercenterservice.Se
 	}
 
 	if rep.Error != nil {
-		return nil, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
+		return nil, fmt.Errorf("%w: user center search user: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	users := make([]types.UserCenterUser, 0, len(rep.Users))
@@ -66,7 +66,7 @@ func (adapter *Adapter) GetUserByUID(ctx context.Context, req usercenterservice.
 	}
 
 	if rep.Error != nil {
-		return types.UserCenterUser{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
+		return types.UserCenterUser{}, fmt.Errorf("%w: user center get user by uid: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	var deleteTime gorm.DeletedAt
@@ -93,7 +93,7 @@ func (adapter *Adapter) GetUserByUsername(ctx context.Context, req usercenterser
 	}
 
 	if rep.Error != nil {
-		return types.UserCenterUser{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
+		return types.UserCenterUser{}, fmt.Errorf("%w: user center get user by username: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	var deleteTime gorm.DeletedAt
@@ -121,7 +121,7 @@ func (adapter *Adapter) CreateUser(ctx context.Context, req usercenterservice.Cr
 	}
 
 	if rep.Error != nil {
-		return types.UserCenterUser{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
+		return types.UserCenterUser{}, fmt.Errorf("%w: user center create user: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	var deleteTime gorm.DeletedAt
@@ -149,7 +149,7 @@ func (adapter *Adapter) ValidatePassword(ctx context.Context, req usercenterserv
 	}
 
 	if rep.Error != nil {
-		return fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
+		return fmt.Errorf("%w: user center validate password: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	return nil
