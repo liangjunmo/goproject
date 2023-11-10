@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
-	"github.com/liangjunmo/goproject/internal/server/config"
-	"github.com/liangjunmo/goproject/internal/server/usercenter"
+	"github.com/liangjunmo/goproject/internal/app/server/config"
+	"github.com/liangjunmo/goproject/internal/app/server/usercenter"
 	"github.com/liangjunmo/goproject/internal/service/usercenterservice"
 )
 

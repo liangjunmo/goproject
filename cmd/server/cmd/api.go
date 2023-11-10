@@ -17,10 +17,10 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
+	v1 "github.com/liangjunmo/goproject/internal/app/server/api/v1"
+	"github.com/liangjunmo/goproject/internal/app/server/config"
+	"github.com/liangjunmo/goproject/internal/app/server/usercenter"
 	"github.com/liangjunmo/goproject/internal/manager"
-	v1 "github.com/liangjunmo/goproject/internal/server/api/v1"
-	"github.com/liangjunmo/goproject/internal/server/config"
-	"github.com/liangjunmo/goproject/internal/server/usercenter"
 	"github.com/liangjunmo/goproject/internal/service/userservice"
 	"github.com/liangjunmo/goproject/internal/types"
 )
