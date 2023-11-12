@@ -106,7 +106,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 
 func (component *AccountComponent) Auth(ctx context.Context, token string) (*UserJwtClaims, error) {
 	if token == "" {
-		return nil, codes.AuthorizeInvalidTicket
+		return nil, codes.AuthorizeInvalidToken
 	}
 
 	jwtClaims, err := component.parseJwtToken(token, &UserJwtClaims{})
