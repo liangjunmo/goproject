@@ -72,7 +72,7 @@ func (service *businessService) ValidatePassword(ctx context.Context, req Valida
 	}
 
 	if !comparePassword(user.Password, req.Password) {
-		return codes.LoginPasswordWrong
+		return codes.LoginFailedPasswordWrong
 	}
 
 	return nil

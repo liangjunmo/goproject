@@ -81,7 +81,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 	}
 
 	if !ok {
-		return CreateTokenResponse{}, codes.AuthorizeInvalidTicket
+		return CreateTokenResponse{}, codes.AuthorizeFailedInvalidTicket
 	}
 
 	user, err := component.userManager.GetUserByUID(ctx, uid)
@@ -106,7 +106,7 @@ func (component *AccountComponent) CreateToken(ctx context.Context, req CreateTo
 
 func (component *AccountComponent) Auth(ctx context.Context, token string) (*UserJwtClaims, error) {
 	if token == "" {
-		return nil, codes.AuthorizeInvalidToken
+		return nil, codes.AuthorizeFailedInvalidToken
 	}
 
 	jwtClaims, err := component.parseJwtToken(token, &UserJwtClaims{})
@@ -151,12 +151,12 @@ func (component *AccountComponent) parseJwtToken(token string, claims jwt.Claims
 		return []byte(config.Config.API.JWTKey), nil
 	})
 	if err != nil {
-		return jwt.Claims(nil), fmt.Errorf("%w: %v", codes.AuthorizeInvalidToken, err)
+		return jwt.Claims(nil), fmt.Errorf("%w: %v", codes.AuthorizeFailedInvalidToken, err)
 	}
 
 	if jwtToken != nil && jwtToken.Valid {
 		return jwtToken.Claims, nil
 	}
 
-	return jwt.Claims(nil), fmt.Errorf("%w: invalid jwt token", codes.AuthorizeInvalidToken)
+	return jwt.Claims(nil), fmt.Errorf("%w: invalid jwt token", codes.AuthorizeFailedInvalidToken)
 }

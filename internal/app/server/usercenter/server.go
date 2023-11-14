@@ -70,7 +70,7 @@ func (server *Server) GetUserByUID(ctx context.Context, req *usercenterproto.Get
 			Username:   user.Username,
 			CreateTime: user.CreateTime.Unix(),
 			UpdateTime: user.UpdateTime.Unix(),
-			DeleteTime: user.UpdateTime.Unix(),
+			DeleteTime: user.DeleteTime.Time.Unix(),
 		},
 	}, nil
 }
@@ -94,7 +94,7 @@ func (server *Server) GetUserByUsername(ctx context.Context, req *usercenterprot
 			Username:   user.Username,
 			CreateTime: user.CreateTime.Unix(),
 			UpdateTime: user.UpdateTime.Unix(),
-			DeleteTime: user.UpdateTime.Unix(),
+			DeleteTime: user.DeleteTime.Time.Unix(),
 		},
 	}, nil
 }
@@ -119,7 +119,7 @@ func (server *Server) CreateUser(ctx context.Context, req *usercenterproto.Creat
 			Username:   user.Username,
 			CreateTime: user.CreateTime.Unix(),
 			UpdateTime: user.UpdateTime.Unix(),
-			DeleteTime: user.UpdateTime.Unix(),
+			DeleteTime: user.DeleteTime.Time.Unix(),
 		},
 	}, nil
 }
@@ -132,7 +132,7 @@ func (server *Server) ValidatePassword(ctx context.Context, req *usercenterproto
 	if err != nil {
 		return &usercenterproto.ValidatePasswordReply{
 			Error: &usercenterproto.Error{
-				Code:    gocode.Parse(err).Error(),
+				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
 		}, nil

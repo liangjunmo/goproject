@@ -10,13 +10,13 @@ const (
 	InvalidRequest      gocode.Code = "InvalidRequest"
 	InternalServerError gocode.Code = "InternalServerError"
 
-	LoginPasswordWrong    gocode.Code = "LoginPasswordWrong"
-	LoginFailedReachLimit gocode.Code = "LoginFailedReachLimit"
+	LoginFailedPasswordWrong gocode.Code = "LoginFailedPasswordWrong"
+	LoginFailedReachLimit    gocode.Code = "LoginFailedReachLimit"
 
-	AuthorizeInvalidTicket gocode.Code = "AuthorizeInvalidTicket"
-	AuthorizeInvalidToken  gocode.Code = "AuthorizeInvalidToken"
-	AuthorizeFailed        gocode.Code = "AuthorizeFailed"
+	AuthorizeFailed              gocode.Code = "AuthorizeFailed"
+	AuthorizeFailedInvalidTicket gocode.Code = "AuthorizeFailedInvalidTicket"
+	AuthorizeFailedInvalidToken  gocode.Code = "AuthorizeFailedInvalidToken"
 
-	UserAlreadyExists gocode.Code = "UserAlreadyExists"
 	UserNotFound      gocode.Code = "UserNotFound"
+	UserAlreadyExists gocode.Code = "UserAlreadyExists"
 )
