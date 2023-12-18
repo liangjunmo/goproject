@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+option go_package = "github.com/liangjunmo/goproject/api/usercenterproto";
+
+package usercenterproto;
+
+service UserCenter {
+  rpc SearchUser (SearchUserRequest) returns (SearchUserReply) {}
+  rpc GetUserByUID (GetUserByUIDRequest) returns (GetUserByUIDReply) {}
+  rpc GetUserByUsername (GetUserByUsernameRequest) returns (GetUserByUsernameReply) {}
+  rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {}
+  rpc ValidatePassword (ValidatePasswordRequest) returns (ValidatePasswordReply) {}
+}
+
+message Code {
+  string Code = 1;
+  string Message = 2;
+}
+
+message User {
+  uint32 UID = 1;
+  string Username = 2;
+  int64 CreateTime = 3;
+  int64 UpdateTime = 4;
+}
+
+message SearchUserRequest {
+  repeated uint32 Uids = 1;
+  string Username = 2;
+}
+
+message SearchUserReply {
+  Code Code = 1;
+  map<uint32, User> Users = 2;
+}
+
+message GetUserByUIDRequest {
+  uint32 UID = 1;
+}
+
+message GetUserByUIDReply {
+  Code Code = 1;
+  User User = 2;
+}
+
+message GetUserByUsernameRequest {
+  string Username = 1;
+}
+
+message GetUserByUsernameReply {
+  Code Code = 1;
+  User User = 2;
+}
+
+message CreateUserRequest {
+  string Username = 1;
+  string Password = 2;
+}
+
+message CreateUserReply {
+  Code Code = 1;
+  uint32 UID = 2;
+}
+
+message ValidatePasswordRequest {
+  string Username = 1;
+  string Password = 2;
+}
+
+message ValidatePasswordReply {
+  Code Code = 1;
+}

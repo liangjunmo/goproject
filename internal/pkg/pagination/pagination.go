@@ -1,67 +1,43 @@
 package pagination
 
-import "github.com/spf13/cast"
-
-const (
-	DefaultPageIndex uint32 = 1
-	DefaultPageSize  uint32 = 10
-)
-
-type Pagination struct {
-	PageIndex   uint32 `json:"page_index"`
-	PageSize    uint32 `json:"page_size"`
-	PageTotal   uint32 `json:"page_total"`
-	ResultTotal uint32 `json:"result_total"`
-	Offset      int    `json:"-"`
-	Limit       int    `json:"-"`
+type Pagination interface {
+	GetPage() uint32
+	GetCapacityPerPage() uint32
+	GetTotalPages() uint32
+	GetTotalRecords() uint32
+	GetOffset() int
+	GetLimit() int
 }
 
-type Request struct {
-	PageIndex uint32 `form:"page_index" json:"page_index"`
-	PageSize  uint32 `form:"page_index" json:"page_size"`
+type DefaultPagination struct {
+	Page            uint32 `json:"page"`
+	CapacityPerPage uint32 `json:"capacity_per_page"`
+	TotalPages      uint32 `json:"total_pages"`
+	TotalRecords    uint32 `json:"total_records"`
+	Offset          int    `json:"offset"`
+	Limit           int    `json:"limit"`
 }
 
-func (req Request) Paginate(_total interface{}) Pagination {
-	if req.PageIndex < 1 {
-		req.PageIndex = DefaultPageIndex
-	}
+func (p DefaultPagination) GetPage() uint32 {
+	return p.Page
+}
 
-	if req.PageSize < 1 {
-		req.PageSize = DefaultPageSize
-	}
+func (p DefaultPagination) GetCapacityPerPage() uint32 {
+	return p.CapacityPerPage
+}
 
-	var (
-		total     = cast.ToUint32(_total)
-		pageTotal = total / req.PageSize
-		offset    uint32
-		limit     uint32
-	)
+func (p DefaultPagination) GetTotalPages() uint32 {
+	return p.TotalPages
+}
 
-	if total%req.PageSize > 0 {
-		pageTotal++
-	}
+func (p DefaultPagination) GetTotalRecords() uint32 {
+	return p.TotalRecords
+}
 
-	if pageTotal == 0 {
-		pageTotal = 1
-	}
+func (p DefaultPagination) GetOffset() int {
+	return p.Offset
+}
 
-	if req.PageIndex > pageTotal {
-		req.PageIndex = pageTotal
-	}
-
-	offset = (req.PageIndex - 1) * req.PageSize
-	limit = req.PageSize
-
-	if offset+limit > total {
-		limit = total - offset
-	}
-
-	return Pagination{
-		PageIndex:   req.PageIndex,
-		PageSize:    req.PageSize,
-		PageTotal:   pageTotal,
-		ResultTotal: total,
-		Offset:      int(offset),
-		Limit:       int(limit),
-	}
+func (p DefaultPagination) GetLimit() int {
+	return p.Limit
 }

@@ -1,0 +1,13 @@
+environment:
+debug: false
+jwtKey:
+apiServerAddr:
+userCenterRPCServerAddr:
+db:
+  addr:
+  user:
+  password:
+  database:
+redis:
+  addr:
+  password:

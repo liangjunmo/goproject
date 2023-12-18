@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  goproject-mysql:
+    container_name: goproject-mysql
+    image: mysql:5.7.41-debian
+    restart: on-failure
+    environment:
+      - MYSQL_DATABASE=goproject
+      - MYSQL_USER=goproject
+      - MYSQL_PASSWORD=goproject
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    command: [mysqld, --character-set-server=utf8mb4]
+  goproject-redis:
+    container_name: goproject-redis
+    image: redis:6.2.11-bullseye
+    restart: on-failure
+  goproject-api:
+    container_name: goproject-api
+    image: ${DOCKER_REPOSITORY}/goproject:latest
+    restart: on-failure
+    ports:
+      - "10010:8000"
+    volumes:
+      - ./goproject.yaml:/etc/goproject/goproject.yaml
+    environment:
+      - GOPROJECT_CONFIG_FILE=/etc/goproject/goproject.yaml
+    command: [ goproject, api ]
+  goproject-worker:
+    container_name: goproject-worker
+    image: ${DOCKER_REPOSITORY}/goproject:latest
+    restart: on-failure
+    volumes:
+      - ./goproject.yaml:/etc/goproject/goproject.yaml
+    environment:
+      - GOPROJECT_CONFIG_FILE=/etc/goproject/goproject.yaml
+    command: [ goproject, worker ]
+  goproject-usercenter-rpc:
+    container_name: goproject-usercenter-rpc
+    image: ${DOCKER_REPOSITORY}/goproject-usercenter:latest
+    restart: on-failure
+    volumes:
+      - ./usercenter.yaml:/etc/goproject/usercenter.yaml
+    environment:
+      - GOPROJECT_USERCENTER_CONFIG_FILE=/etc/goproject/usercenter.yaml
+    command: [usercenter, rpc]

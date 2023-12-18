@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: goproject
+  name: goproject-usercenter-rpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: goproject-usercenter-rpc
+  template:
+    metadata:
+      labels:
+        app: goproject-usercenter-rpc
+    spec:
+      nodeSelector:
+        goproject: "true"
+      containers:
+        - name: goproject-usercenter-rpc
+          image: DOCKER_REPOSITORY/goproject-usercenter:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: GOPROJECT_USERCENTER_CONFIG_FILE
+              value: /etc/goproject/usercenter.yaml
+          command: [usercenter, rpc]
+          livenessProbe:
+            httpGet:
+              port: 8000
+              path: /health
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: 4
+              memory: 8Gi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          volumeMounts:
+            - name: usercenter-configmap
+              subPath: usercenter.yaml
+              mountPath: /etc/goproject/usercenter.yaml
+            - name: localtime
+              mountPath: /etc/localtime
+      volumes:
+        - name: usercenter-configmap
+          configMap:
+            name: goproject-usercenter
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File

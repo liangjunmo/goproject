@@ -1,0 +1,11 @@
+environment:
+debug: false
+rpcServerAddr:
+db:
+  addr:
+  user:
+  password:
+  database:
+redis:
+  addr:
+  password:

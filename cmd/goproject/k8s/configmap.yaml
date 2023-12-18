@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: goproject
+  name: goproject
+data:
+  goproject.yaml: |
+    environment:
+    debug: false
+    goproject:
+      jwtKey:
+      apiServerAddr:
+      userCenterRPCServerAddr:
+    db:
+      addr:
+      user:
+      password:
+      database:
+    redis:
+      addr:
+      password:

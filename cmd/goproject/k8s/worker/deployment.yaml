@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: goproject
+  name: goproject-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: goproject-worker
+  template:
+    metadata:
+      labels:
+        app: goproject-worker
+    spec:
+      nodeSelector:
+        goproject: "true"
+      containers:
+        - name: goproject-worker
+          image: DOCKER_REPOSITORY/goproject:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: GOPROJECT_CONFIG_FILE
+              value: /etc/goproject/goproject.yaml
+          command: [goproject, worker]
+          livenessProbe:
+            httpGet:
+              port: 8000
+              path: /health
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: 4
+              memory: 8Gi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          volumeMounts:
+            - name: goproject-configmap
+              subPath: goproject.yaml
+              mountPath: /etc/goproject/goproject.yaml
+            - name: localtime
+              mountPath: /etc/localtime
+      volumes:
+        - name: goproject-configmap
+          configMap:
+            name: goproject
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File

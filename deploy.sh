@@ -1,21 +1,28 @@
 #!/usr/bin/env bash
 
-nginx() {
-  DOCKER_REGISTRY=$DOCKER_REGISTRY make redeploy-nginx
+usercenter-rpc() {
+  DOCKER_REGISTRY=$DOCKER_REGISTRY cd ./cmd/usercenter/ && make k8s-deploy-usercenter-rpc
 }
 
-server-api() {
-  DOCKER_REGISTRY=$DOCKER_REGISTRY make redeploy-server-api
+goproject-nginx() {
+  DOCKER_REGISTRY=$DOCKER_REGISTRY cd ./cmd/goproject/ && make k8s-deploy-goproject-nginx
+}
+
+goproject-api() {
+  DOCKER_REGISTRY=$DOCKER_REGISTRY cd ./cmd/goproject/ && make k8s-deploy-goproject-api
 }
 
 echo "deploy $PROJECT"
 
 case $PROJECT in
-    nginx)
-      nginx
+    usercenter-rpc)
+      usercenter-rpc
       ;;
-    server-api)
-      server-api
+    goproject-nginx)
+      goproject-nginx
+      ;;
+    goproject-api)
+      goproject-api
       ;;
     *)
       echo "invalid PROJECT $PROJECT"

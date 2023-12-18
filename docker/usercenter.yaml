@@ -1,0 +1,11 @@
+environment:
+debug: true
+rpcServerAddr: :8000
+db:
+  addr: goproject-mysql:3306
+  user: goproject
+  password: goproject
+  database: goproject
+redis:
+  addr: goproject-redis:6379
+  password:
