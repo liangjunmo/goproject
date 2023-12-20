@@ -7,10 +7,9 @@ data:
   goproject.yaml: |
     environment:
     debug: false
-    goproject:
-      jwtKey:
-      apiServerAddr:
-      userCenterRPCServerAddr:
+    jwtKey:
+    apiServerAddr:
+    userCenterRPCServerAddr:
     db:
       addr:
       user:
