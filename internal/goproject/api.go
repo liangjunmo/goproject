@@ -59,6 +59,7 @@ func RunAPIServer(config APIServerConfig) {
 
 	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
 	userService := userservice.ProvideService(db, redisClient, userCenterClient)
+
 	accountService := accountservice.ProvideService(
 		accountservice.Config{
 			JWTKey: config.JWTKey,
@@ -67,18 +68,17 @@ func RunAPIServer(config APIServerConfig) {
 		userService,
 	)
 
-	handler := api.NewHandler(
+	router := gin.Default()
+
+	api.Router(
 		api.Config{
 			Debug:        config.Debug,
 			TracingIDKey: tracingKeys[0],
 		},
+		router,
 		accountService,
 		userService,
 	)
-
-	router := gin.Default()
-
-	api.Router(router, handler)
 
 	server := &http.Server{
 		Addr:    config.Addr,

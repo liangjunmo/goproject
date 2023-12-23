@@ -22,13 +22,11 @@ type Service interface {
 }
 
 func ProvideService(config Config, redisClient *redis.Client, userService userservice.Service) Service {
-	redisManager := newDefaultRedisManager(redisClient)
-
-	return newDefaultService(config, redisManager, userService)
-}
-
-type Config struct {
-	JWTKey string
+	return newDefaultService(
+		config,
+		newDefaultRedisManager(redisClient),
+		userService,
+	)
 }
 
 type defaultService struct {
@@ -191,10 +189,4 @@ func (service *defaultService) parseJwtToken(token string, claims jwt.Claims) (j
 	}
 
 	return jwt.Claims(nil), fmt.Errorf("%w: invalid jwt token", codes.AuthorizeFailedInvalidToken)
-}
-
-type UserJwtClaims struct {
-	jwt.StandardClaims
-
-	UID uint32
 }

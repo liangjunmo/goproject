@@ -12,41 +12,35 @@ import (
 	"github.com/liangjunmo/goproject/internal/codes"
 	"github.com/liangjunmo/goproject/internal/goproject/accountservice"
 	"github.com/liangjunmo/goproject/internal/goproject/userservice"
-	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
 
 var (
 	ginCtxUserKey = "user_claims"
 )
 
-type Config struct {
-	Debug        bool
-	TracingIDKey string
-}
-
-type Handler struct {
+type handler struct {
 	config         Config
 	accountService accountservice.Service
 	userService    userservice.Service
 }
 
-func NewHandler(config Config, accountService accountservice.Service, userService userservice.Service) *Handler {
-	return &Handler{
+func newHandler(config Config, accountService accountservice.Service, userService userservice.Service) *handler {
+	return &handler{
 		config:         config,
 		accountService: accountService,
 		userService:    userService,
 	}
 }
 
-func (handler *Handler) responseDefault(c *gin.Context, data interface{}, err error) {
+func (handler *handler) responseDefault(c *gin.Context, data interface{}, err error) {
 	handler.response(c, 200, data, err)
 }
 
-func (handler *Handler) response(c *gin.Context, httpStatusCode int, data interface{}, err error) {
+func (handler *handler) response(c *gin.Context, httpStatusCode int, data interface{}, err error) {
 	c.JSON(httpStatusCode, handler.buildResponseBody(c, data, err))
 }
 
-func (handler *Handler) buildResponseBody(c *gin.Context, data interface{}, err error) gin.H {
+func (handler *handler) buildResponseBody(c *gin.Context, data interface{}, err error) gin.H {
 	if data == nil {
 		data = map[string]interface{}{}
 	}
@@ -76,12 +70,12 @@ func (handler *Handler) buildResponseBody(c *gin.Context, data interface{}, err 
 	return body
 }
 
-func (handler *Handler) getUserClaims(c *gin.Context) *accountservice.UserJwtClaims {
+func (handler *handler) getUserClaims(c *gin.Context) *accountservice.UserJwtClaims {
 	user, _ := c.Get(ginCtxUserKey)
 	return user.(*accountservice.UserJwtClaims)
 }
 
-func (handler *Handler) Ping(c *gin.Context) {
+func (handler *handler) Ping(c *gin.Context) {
 	c.String(200, "pong")
 }
 
@@ -95,7 +89,7 @@ type LoginResponse struct {
 	FailedCount uint32 `json:"failed_count"`
 }
 
-func (handler *Handler) Login(c *gin.Context) {
+func (handler *handler) Login(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var (
@@ -137,7 +131,7 @@ type CreateTokenResponse struct {
 	Token string `json:"token"`
 }
 
-func (handler *Handler) CreateToken(c *gin.Context) {
+func (handler *handler) CreateToken(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var (
@@ -164,7 +158,7 @@ func (handler *Handler) CreateToken(c *gin.Context) {
 	handler.responseDefault(c, resp, nil)
 }
 
-func (handler *Handler) Authorize(c *gin.Context) {
+func (handler *handler) Authorize(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	claims, err := handler.accountService.Authorize(ctx, accountservice.AuthorizeCommand{Token: c.GetHeader("Authorization")})
@@ -184,8 +178,8 @@ type ListUserRequest struct {
 }
 
 type ListUserResponse struct {
-	Pagination pagination.Pagination `json:"pagination"`
-	List       []ListUserData        `json:"list"`
+	Pagination Pagination     `json:"pagination"`
+	List       []ListUserData `json:"list"`
 }
 
 type ListUserData struct {
@@ -194,7 +188,7 @@ type ListUserData struct {
 	CreateTime string `json:"create_time"`
 }
 
-func (handler *Handler) ListUser(c *gin.Context) {
+func (handler *handler) ListUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var (
@@ -217,8 +211,13 @@ func (handler *Handler) ListUser(c *gin.Context) {
 	}
 
 	resp = ListUserResponse{
-		Pagination: p,
-		List:       make([]ListUserData, 0, len(users)),
+		Pagination: Pagination{
+			Page:            p.GetPage(),
+			CapacityPerPage: p.GetCapacityPerPage(),
+			TotalPages:      p.GetTotalPages(),
+			TotalRecords:    p.GetTotalRecords(),
+		},
+		List: make([]ListUserData, 0, len(users)),
 	}
 
 	if len(users) == 0 {
@@ -250,7 +249,7 @@ type SearchUserData struct {
 	CreateTime string `json:"create_time"`
 }
 
-func (handler *Handler) SearchUser(c *gin.Context) {
+func (handler *handler) SearchUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var (
@@ -309,7 +308,7 @@ type GetUserResponse struct {
 	CreateTime string `json:"create_time"`
 }
 
-func (handler *Handler) GetUser(c *gin.Context) {
+func (handler *handler) GetUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var (
@@ -349,7 +348,7 @@ type CreateUserResponse struct {
 	UID uint32 `json:"uid"`
 }
 
-func (handler *Handler) CreateUser(c *gin.Context) {
+func (handler *handler) CreateUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var (

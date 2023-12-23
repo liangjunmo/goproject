@@ -41,18 +41,9 @@ func (p Pagination) GetLimit() int {
 
 type PaginationRequest struct {
 	Page     uint32 `form:"page" json:"page"`
-	Capacity uint32 `form:"capacity" json:"capacity"`
+	Capacity uint32 `form:"-" json:"-"`
 }
 
 func (req PaginationRequest) Paginate(totalRecords interface{}) pagination.Pagination {
-	p := pagination.Paginate(req.Page, 1, req.Capacity, 10, cast.ToUint32(totalRecords))
-
-	return Pagination{
-		Page:            p.GetPage(),
-		CapacityPerPage: p.GetCapacityPerPage(),
-		TotalPages:      p.GetTotalPages(),
-		TotalRecords:    p.GetTotalRecords(),
-		Offset:          p.GetOffset(),
-		Limit:           p.GetLimit(),
-	}
+	return pagination.Paginate(req.Page, 1, req.Capacity, 10, cast.ToUint32(totalRecords))
 }

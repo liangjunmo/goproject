@@ -26,10 +26,11 @@ type Service interface {
 }
 
 func ProvideService(db *gorm.DB, redisClient *redis.Client, userCenterClient usercenterproto.UserCenterClient) Service {
-	repository := newDefaultRepository(db)
-	mutexProvider := newDefaultMutexProvider(redsync.New(goredis.NewPool(redisClient)))
-
-	return newDefaultService(repository, mutexProvider, userCenterClient)
+	return newDefaultService(
+		newDefaultRepository(db),
+		newDefaultMutexProvider(redsync.New(goredis.NewPool(redisClient))),
+		userCenterClient,
+	)
 }
 
 type defaultService struct {
@@ -262,4 +263,8 @@ func (service *defaultService) ValidatePassword(ctx context.Context, cmd Validat
 	}
 
 	return nil
+}
+
+func (service *defaultService) taskToRunExample(ctx context.Context, log *logrus.Entry) {
+	log.WithContext(ctx).Info("runExample")
 }

@@ -47,12 +47,11 @@ func RunWorkerServer(config WorkerServerConfig) {
 	}()
 
 	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
-	userWorker := userservice.ProvideWorker(db, redisClient, userCenterClient)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	wg := &sync.WaitGroup{}
 
-	userWorker.Run(ctx, wg)
+	userservice.RunScheduler(ctx, wg, db, redisClient, userCenterClient)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)

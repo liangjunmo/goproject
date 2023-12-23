@@ -3,9 +3,16 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gotraceutil"
+
+	"github.com/liangjunmo/goproject/internal/goproject/accountservice"
+	"github.com/liangjunmo/goproject/internal/goproject/userservice"
 )
 
-func Router(router *gin.Engine, handler *Handler) {
+func Router(config Config, engine *gin.Engine, accountService accountservice.Service, userService userservice.Service) {
+	router(engine, newHandler(config, accountService, userService))
+}
+
+func router(router *gin.Engine, handler *handler) {
 	router.GET("/ping", handler.Ping)
 
 	router.Use(gotraceutil.GinMiddleware())
