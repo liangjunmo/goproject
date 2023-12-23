@@ -68,21 +68,21 @@ func RunAPIServer(config APIServerConfig) {
 		userService,
 	)
 
-	router := gin.Default()
+	engine := gin.Default()
 
 	api.Router(
 		api.Config{
 			Debug:        config.Debug,
 			TracingIDKey: tracingKeys[0],
 		},
-		router,
+		engine,
 		accountService,
 		userService,
 	)
 
 	server := &http.Server{
 		Addr:    config.Addr,
-		Handler: router,
+		Handler: engine,
 	}
 
 	go func() {

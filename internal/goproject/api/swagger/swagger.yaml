@@ -1,0 +1,223 @@
+definitions:
+  api.CreateTokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  api.CreateUserResponse:
+    properties:
+      uid:
+        type: integer
+    type: object
+  api.GetUserResponse:
+    properties:
+      create_time:
+        type: string
+      uid:
+        type: integer
+      username:
+        type: string
+    type: object
+  api.ListUserData:
+    properties:
+      create_time:
+        type: string
+      uid:
+        type: integer
+      username:
+        type: string
+    type: object
+  api.ListUserResponse:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/api.ListUserData'
+        type: array
+      pagination:
+        $ref: '#/definitions/api.Pagination'
+    type: object
+  api.LoginResponse:
+    properties:
+      failed_count:
+        type: integer
+      ticket:
+        type: string
+    type: object
+  api.Pagination:
+    properties:
+      capacity_per_page:
+        type: integer
+      page:
+        type: integer
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
+    type: object
+  api.SearchUserData:
+    properties:
+      create_time:
+        type: string
+      uid:
+        type: integer
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: GoProject API
+paths:
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: login
+      parameters:
+      - description: username
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.LoginResponse'
+      summary: login
+      tags:
+      - account
+  /api/v1/token:
+    post:
+      consumes:
+      - application/json
+      description: create token
+      parameters:
+      - description: ticket
+        in: body
+        name: ticket
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.CreateTokenResponse'
+      summary: create token
+      tags:
+      - account
+  /api/v1/user:
+    post:
+      description: create user
+      parameters:
+      - description: username
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.CreateUserResponse'
+      summary: create user
+      tags:
+      - user
+  /api/v1/user/{uid}:
+    get:
+      description: get user
+      parameters:
+      - description: uid
+        in: path
+        name: uid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.GetUserResponse'
+      summary: get user
+      tags:
+      - user
+  /api/v1/user/list:
+    get:
+      description: list user
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ListUserResponse'
+      summary: list user
+      tags:
+      - user
+  /api/v1/user/search:
+    get:
+      description: search user
+      parameters:
+      - description: uids
+        in: query
+        name: uids
+        type: array
+      - description: username
+        in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.SearchUserData'
+            type: array
+      summary: search user
+      tags:
+      - user
+  /ping:
+    get:
+      description: ping
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: ping
+      tags:
+      - default
+swagger: "2.0"

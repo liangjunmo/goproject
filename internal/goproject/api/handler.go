@@ -75,6 +75,14 @@ func (handler *handler) getUserClaims(c *gin.Context) *accountservice.UserJwtCla
 	return user.(*accountservice.UserJwtClaims)
 }
 
+// Ping
+//
+//	@Summary		ping
+//	@Description	ping
+//	@Tags			default
+//	@Produce		plain
+//	@Success		200	{object}	string
+//	@Router			/ping [get]
 func (handler *handler) Ping(c *gin.Context) {
 	c.String(200, "pong")
 }
@@ -89,6 +97,17 @@ type LoginResponse struct {
 	FailedCount uint32 `json:"failed_count"`
 }
 
+// Login
+//
+//	@Summary		login
+//	@Description	login
+//	@Tags			account
+//	@Accept			json
+//	@Produce		json
+//	@Param			username	body		string	true	"username"
+//	@Param			password	body		string	true	"password"
+//	@Success		200			{object}	LoginResponse
+//	@Router			/api/v1/login [post]
 func (handler *handler) Login(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -131,6 +150,16 @@ type CreateTokenResponse struct {
 	Token string `json:"token"`
 }
 
+// CreateToken
+//
+//	@Summary		create token
+//	@Description	create token
+//	@Tags			account
+//	@Accept			json
+//	@Produce		json
+//	@Param			ticket	body		string	true	"ticket"
+//	@Success		200		{object}	CreateTokenResponse
+//	@Router			/api/v1/token [post]
 func (handler *handler) CreateToken(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -188,6 +217,15 @@ type ListUserData struct {
 	CreateTime string `json:"create_time"`
 }
 
+// ListUser
+//
+//	@Summary		list user
+//	@Description	list user
+//	@Tags			user
+//	@Produce		json
+//	@Param			page	query		string	false	"page"
+//	@Success		200		{object}	ListUserResponse
+//	@Router			/api/v1/user/list [get]
 func (handler *handler) ListUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -249,6 +287,16 @@ type SearchUserData struct {
 	CreateTime string `json:"create_time"`
 }
 
+// SearchUser
+//
+//	@Summary		search user
+//	@Description	search user
+//	@Tags			user
+//	@Produce		json
+//	@Param			uids		query		array	false	"uids"
+//	@Param			username	query		string	false	"username"
+//	@Success		200			{object}	SearchUserResponse
+//	@Router			/api/v1/user/search [get]
 func (handler *handler) SearchUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -308,6 +356,15 @@ type GetUserResponse struct {
 	CreateTime string `json:"create_time"`
 }
 
+// GetUser
+//
+//	@Summary		get user
+//	@Description	get user
+//	@Tags			user
+//	@Produce		json
+//	@Param			uid	path		int	true	"uid"
+//	@Success		200	{object}	GetUserResponse
+//	@Router			/api/v1/user/{uid} [get]
 func (handler *handler) GetUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
@@ -348,6 +405,16 @@ type CreateUserResponse struct {
 	UID uint32 `json:"uid"`
 }
 
+// CreateUser
+//
+//	@Summary		create user
+//	@Description	create user
+//	@Tags			user
+//	@Produce		json
+//	@Param			username	body		string	true	"username"
+//	@Param			password	body		string	true	"password"
+//	@Success		200			{object}	CreateUserResponse
+//	@Router			/api/v1/user [post]
 func (handler *handler) CreateUser(c *gin.Context) {
 	ctx := c.Request.Context()
 
