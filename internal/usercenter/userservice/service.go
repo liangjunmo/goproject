@@ -23,10 +23,10 @@ type Service interface {
 }
 
 func ProvideService(db *gorm.DB, redisClient *redis.Client) Service {
-	repository := newDefaultRepository(db)
-	mutexProvider := newDefaultMutexProvider(redsync.New(goredis.NewPool(redisClient)))
-
-	return newDefaultService(repository, mutexProvider)
+	return newDefaultService(
+		newDefaultRepository(db),
+		newDefaultMutexProvider(redsync.New(goredis.NewPool(redisClient))),
+	)
 }
 
 type defaultService struct {

@@ -15,7 +15,7 @@ type defaultMutexProvider struct {
 	sync *redsync.Redsync
 }
 
-func newDefaultMutexProvider(sync *redsync.Redsync) mutexProvider {
+func newDefaultMutexProvider(sync *redsync.Redsync) *defaultMutexProvider {
 	return &defaultMutexProvider{
 		sync: sync,
 	}

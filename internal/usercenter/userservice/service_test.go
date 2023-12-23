@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestService(t *testing.T) {
+func TestDefaultService(t *testing.T) {
 	var (
 		mutex         *mockedMutex
 		mutexProvider *mockedMutexProvider

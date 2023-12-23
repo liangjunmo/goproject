@@ -22,7 +22,7 @@ type defaultRedisManager struct {
 	redisClient *redis.Client
 }
 
-func newDefaultRedisManager(redisClient *redis.Client) redisManager {
+func newDefaultRedisManager(redisClient *redis.Client) *defaultRedisManager {
 	return &defaultRedisManager{
 		redisClient: redisClient,
 	}

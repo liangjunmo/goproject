@@ -39,7 +39,7 @@ type defaultRepository struct {
 	db *gorm.DB
 }
 
-func newDefaultRepository(db *gorm.DB) repository {
+func newDefaultRepository(db *gorm.DB) *defaultRepository {
 	return &defaultRepository{
 		db: db,
 	}

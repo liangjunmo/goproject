@@ -12,7 +12,7 @@ import (
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
 
-func TestService(t *testing.T) {
+func TestDefaultService(t *testing.T) {
 	var (
 		mutex            *mockedMutex
 		mutexProvider    *mockedMutexProvider
