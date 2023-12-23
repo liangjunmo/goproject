@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/liangjunmo/goproject/internal/goproject/testutil"
 	"github.com/liangjunmo/goproject/internal/pkg/dbutil"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
+	"github.com/liangjunmo/goproject/internal/testutil"
 )
 
 func TestDefaultRepository(t *testing.T) {

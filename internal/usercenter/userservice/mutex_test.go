@@ -8,7 +8,7 @@ import (
 	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
 	"github.com/stretchr/testify/require"
 
-	"github.com/liangjunmo/goproject/internal/usercenter/testutil"
+	"github.com/liangjunmo/goproject/internal/testutil"
 )
 
 func TestDefaultMutexProvider(t *testing.T) {

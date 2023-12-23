@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/internal/pkg/dbutil"
-	"github.com/liangjunmo/goproject/internal/usercenter/testutil"
+	"github.com/liangjunmo/goproject/internal/testutil"
 )
 
 func TestDefaultRepository(t *testing.T) {
