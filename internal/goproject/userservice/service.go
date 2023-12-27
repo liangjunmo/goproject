@@ -74,8 +74,8 @@ func (service *defaultService) List(ctx context.Context, cmd ListCommand) (pagin
 		return nil, nil, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if rep.Code != nil {
-		return nil, nil, fmt.Errorf("%w: %s", gocode.Code(rep.Code.Code), rep.Code.Message)
+	if rep.Error != nil {
+		return nil, nil, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	for i := range users {
@@ -103,8 +103,8 @@ func (service *defaultService) Search(ctx context.Context, cmd SearchCommand) (m
 		return nil, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if rep.Code != nil {
-		return nil, fmt.Errorf("%w: %s", gocode.Code(rep.Code.Code), rep.Code.Message)
+	if rep.Error != nil {
+		return nil, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	if len(rep.Users) == 0 {
@@ -153,8 +153,8 @@ func (service *defaultService) Get(ctx context.Context, cmd GetCommand) (User, e
 		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if rep.Code != nil {
-		return User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Code.Code), rep.Code.Message)
+	if rep.Error != nil {
+		return User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	user.UserCenterUser = rep.User
@@ -174,8 +174,8 @@ func (service *defaultService) GetByUsername(ctx context.Context, cmd GetByUsern
 		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if rep.Code != nil {
-		return User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Code.Code), rep.Code.Message)
+	if rep.Error != nil {
+		return User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	user, exist, err := service.repository.Get(ctx, rep.User.UID)
@@ -206,8 +206,8 @@ func (service *defaultService) Create(ctx context.Context, cmd CreateCommand) (u
 		return 0, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if rep.Code != nil {
-		return 0, fmt.Errorf("%w: %s", gocode.Code(rep.Code.Code), rep.Code.Message)
+	if rep.Error != nil {
+		return 0, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	m := service.mutexProvider.ProvideCreateUserMutex(rep.UID)
@@ -258,8 +258,8 @@ func (service *defaultService) ValidatePassword(ctx context.Context, cmd Validat
 		return fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
-	if rep.Code != nil {
-		return fmt.Errorf("%w: %s", gocode.Code(rep.Code.Code), rep.Code.Message)
+	if rep.Error != nil {
+		return fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	return nil

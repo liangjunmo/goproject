@@ -33,7 +33,7 @@ func (server *Server) SearchUser(ctx context.Context, req *usercenterproto.Searc
 		server.log.WithContext(ctx).WithError(err).Error(err)
 
 		return &usercenterproto.SearchUserReply{
-			Code: &usercenterproto.Code{
+			Error: &usercenterproto.Error{
 				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
@@ -62,7 +62,7 @@ func (server *Server) GetUserByUID(ctx context.Context, req *usercenterproto.Get
 		server.log.WithContext(ctx).WithError(err).Error(err)
 
 		return &usercenterproto.GetUserByUIDReply{
-			Code: &usercenterproto.Code{
+			Error: &usercenterproto.Error{
 				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
@@ -85,7 +85,7 @@ func (server *Server) GetUserByUsername(ctx context.Context, req *usercenterprot
 		server.log.WithContext(ctx).WithError(err).Error(err)
 
 		return &usercenterproto.GetUserByUsernameReply{
-			Code: &usercenterproto.Code{
+			Error: &usercenterproto.Error{
 				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
@@ -111,7 +111,7 @@ func (server *Server) CreateUser(ctx context.Context, req *usercenterproto.Creat
 		server.log.WithContext(ctx).WithError(err).Error(err)
 
 		return &usercenterproto.CreateUserReply{
-			Code: &usercenterproto.Code{
+			Error: &usercenterproto.Error{
 				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},
@@ -132,7 +132,7 @@ func (server *Server) ValidatePassword(ctx context.Context, req *usercenterproto
 		server.log.WithContext(ctx).WithError(err).Error(err)
 
 		return &usercenterproto.ValidatePasswordReply{
-			Code: &usercenterproto.Code{
+			Error: &usercenterproto.Error{
 				Code:    gocode.Parse(err).String(),
 				Message: err.Error(),
 			},

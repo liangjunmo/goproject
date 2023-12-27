@@ -12,7 +12,7 @@ service UserCenter {
   rpc ValidatePassword (ValidatePasswordRequest) returns (ValidatePasswordReply) {}
 }
 
-message Code {
+message Error {
   string Code = 1;
   string Message = 2;
 }
@@ -30,7 +30,7 @@ message SearchUserRequest {
 }
 
 message SearchUserReply {
-  Code Code = 1;
+  Error Error = 1;
   map<uint32, User> Users = 2;
 }
 
@@ -39,7 +39,7 @@ message GetUserByUIDRequest {
 }
 
 message GetUserByUIDReply {
-  Code Code = 1;
+  Error Error = 1;
   User User = 2;
 }
 
@@ -48,7 +48,7 @@ message GetUserByUsernameRequest {
 }
 
 message GetUserByUsernameReply {
-  Code Code = 1;
+  Error Error = 1;
   User User = 2;
 }
 
@@ -58,7 +58,7 @@ message CreateUserRequest {
 }
 
 message CreateUserReply {
-  Code Code = 1;
+  Error Error = 1;
   uint32 UID = 2;
 }
 
@@ -68,5 +68,5 @@ message ValidatePasswordRequest {
 }
 
 message ValidatePasswordReply {
-  Code Code = 1;
+  Error Error = 1;
 }
