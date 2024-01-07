@@ -1,4 +1,4 @@
-package accountservice
+package accountserviceimpl
 
 import (
 	"context"
@@ -11,17 +11,12 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/goproject/userservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/accountservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/hashutil"
 )
 
-type Service interface {
-	Login(ctx context.Context, cmd LoginCommand) (ticket string, failedCount uint32, err error)
-	CreateToken(ctx context.Context, cmd CreateTokenCommand) (token string, err error)
-	Authorize(ctx context.Context, cmd AuthorizeCommand) (*UserJwtClaims, error)
-}
-
-func ProvideService(config Config, redisClient *redis.Client, userService userservice.Service) Service {
+func ProvideService(config Config, redisClient *redis.Client, userService userservice.Service) accountservice.Service {
 	return newDefaultService(
 		config,
 		newDefaultRedisManager(redisClient),
@@ -36,7 +31,7 @@ type defaultService struct {
 	userService  userservice.Service
 }
 
-func newDefaultService(config Config, redisManager redisManager, userService userservice.Service) Service {
+func newDefaultService(config Config, redisManager redisManager, userService userservice.Service) accountservice.Service {
 	return &defaultService{
 		log:          logrus.WithField("tag", "goproject.accountservice.service"),
 		config:       config,
@@ -45,17 +40,7 @@ func newDefaultService(config Config, redisManager redisManager, userService use
 	}
 }
 
-type LoginCommand struct {
-	Username string
-	Password string
-}
-
-type LoginResult struct {
-	Ticket      string
-	FailedCount uint32
-}
-
-func (service *defaultService) Login(ctx context.Context, cmd LoginCommand) (ticket string, failedCount uint32, err error) {
+func (service *defaultService) Login(ctx context.Context, cmd accountservice.LoginCommand) (ticket string, failedCount uint32, err error) {
 	count, err := service.redisManager.GetLoginFailedCount(ctx, cmd.Username)
 	if err != nil {
 		return "", 0, fmt.Errorf("%w: %v", codes.InternalServerError, err)
@@ -98,11 +83,7 @@ func (service *defaultService) Login(ctx context.Context, cmd LoginCommand) (tic
 	return ticket, 0, nil
 }
 
-type CreateTokenCommand struct {
-	Ticket string
-}
-
-func (service *defaultService) CreateToken(ctx context.Context, req CreateTokenCommand) (token string, err error) {
+func (service *defaultService) CreateToken(ctx context.Context, req accountservice.CreateTokenCommand) (token string, err error) {
 	uid, ok, err := service.redisManager.GetLoginTicket(ctx, req.Ticket)
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", codes.InternalServerError, err)
@@ -117,7 +98,7 @@ func (service *defaultService) CreateToken(ctx context.Context, req CreateTokenC
 		return "", err
 	}
 
-	claims := UserJwtClaims{
+	claims := accountservice.UserJwtClaims{
 		UID: user.UID,
 	}
 	claims.StandardClaims.ExpiresAt = time.Now().Add(time.Hour * 24 * 7).Unix()
@@ -130,21 +111,17 @@ func (service *defaultService) CreateToken(ctx context.Context, req CreateTokenC
 	return token, nil
 }
 
-type AuthorizeCommand struct {
-	Token string
-}
-
-func (service *defaultService) Authorize(ctx context.Context, cmd AuthorizeCommand) (*UserJwtClaims, error) {
+func (service *defaultService) Authorize(ctx context.Context, cmd accountservice.AuthorizeCommand) (*accountservice.UserJwtClaims, error) {
 	if cmd.Token == "" {
 		return nil, codes.AuthorizeFailedInvalidToken
 	}
 
-	jwtClaims, err := service.parseJwtToken(cmd.Token, &UserJwtClaims{})
+	jwtClaims, err := service.parseJwtToken(cmd.Token, &accountservice.UserJwtClaims{})
 	if err != nil {
 		return nil, err
 	}
 
-	claims, ok := jwtClaims.(*UserJwtClaims)
+	claims, ok := jwtClaims.(*accountservice.UserJwtClaims)
 	if !ok {
 		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", codes.AuthorizeFailed)
 	}

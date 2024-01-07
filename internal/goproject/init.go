@@ -19,7 +19,7 @@ import (
 	gormlogger "gorm.io/gorm/logger"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/goproject/userservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
 )
 
 type DBConfig struct {

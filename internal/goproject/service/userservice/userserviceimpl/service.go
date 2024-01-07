@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -13,19 +13,11 @@ import (
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
 	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
 
-type Service interface {
-	List(ctx context.Context, cmd ListCommand) (pagination.Pagination, []User, error)
-	Search(ctx context.Context, cmd SearchCommand) (map[uint32]User, error)
-	Get(ctx context.Context, cmd GetCommand) (User, error)
-	GetByUsername(ctx context.Context, cmd GetByUsernameCommand) (User, error)
-	Create(ctx context.Context, cmd CreateCommand) (uid uint32, err error)
-	ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error
-}
-
-func ProvideService(db *gorm.DB, redisClient *redis.Client, userCenterClient usercenterproto.UserCenterClient) Service {
+func ProvideService(db *gorm.DB, redisClient *redis.Client, userCenterClient usercenterproto.UserCenterClient) userservice.Service {
 	return newDefaultService(
 		newDefaultRepository(db),
 		newDefaultMutexProvider(redsync.New(goredis.NewPool(redisClient))),
@@ -49,11 +41,7 @@ func newDefaultService(repository repository, mutexProvider mutexProvider, userC
 	}
 }
 
-type ListCommand struct {
-	pagination.Request
-}
-
-func (service *defaultService) List(ctx context.Context, cmd ListCommand) (pagination.Pagination, []User, error) {
+func (service *defaultService) List(ctx context.Context, cmd userservice.ListCommand) (pagination.Pagination, []userservice.User, error) {
 	p, users, err := service.repository.List(ctx, criteria{
 		Request: cmd.Request,
 	})
@@ -85,12 +73,7 @@ func (service *defaultService) List(ctx context.Context, cmd ListCommand) (pagin
 	return p, users, nil
 }
 
-type SearchCommand struct {
-	Uids     []uint32
-	Username string
-}
-
-func (service *defaultService) Search(ctx context.Context, cmd SearchCommand) (map[uint32]User, error) {
+func (service *defaultService) Search(ctx context.Context, cmd userservice.SearchCommand) (map[uint32]userservice.User, error) {
 	if len(cmd.Uids) == 0 && cmd.Username == "" {
 		return nil, nil
 	}
@@ -132,29 +115,25 @@ func (service *defaultService) Search(ctx context.Context, cmd SearchCommand) (m
 	return users, nil
 }
 
-type GetCommand struct {
-	UID uint32
-}
-
-func (service *defaultService) Get(ctx context.Context, cmd GetCommand) (User, error) {
+func (service *defaultService) Get(ctx context.Context, cmd userservice.GetCommand) (userservice.User, error) {
 	user, exist, err := service.repository.Get(ctx, cmd.UID)
 	if err != nil {
-		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return userservice.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if !exist {
-		return User{}, codes.UserNotFound
+		return userservice.User{}, codes.UserNotFound
 	}
 
 	rep, err := service.userCenterClient.GetUserByUID(ctx, &usercenterproto.GetUserByUIDRequest{
 		UID: user.UID,
 	})
 	if err != nil {
-		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return userservice.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if rep.Error != nil {
-		return User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
+		return userservice.User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	user.UserCenterUser = rep.User
@@ -162,29 +141,25 @@ func (service *defaultService) Get(ctx context.Context, cmd GetCommand) (User, e
 	return user, nil
 }
 
-type GetByUsernameCommand struct {
-	Username string
-}
-
-func (service *defaultService) GetByUsername(ctx context.Context, cmd GetByUsernameCommand) (User, error) {
+func (service *defaultService) GetByUsername(ctx context.Context, cmd userservice.GetByUsernameCommand) (userservice.User, error) {
 	rep, err := service.userCenterClient.GetUserByUsername(ctx, &usercenterproto.GetUserByUsernameRequest{
 		Username: cmd.Username,
 	})
 	if err != nil {
-		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return userservice.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if rep.Error != nil {
-		return User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
+		return userservice.User{}, fmt.Errorf("%w: %s", gocode.Code(rep.Error.Code), rep.Error.Message)
 	}
 
 	user, exist, err := service.repository.Get(ctx, rep.User.UID)
 	if err != nil {
-		return User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
+		return userservice.User{}, fmt.Errorf("%w: %v", codes.InternalServerError, err)
 	}
 
 	if !exist {
-		return User{}, codes.UserNotFound
+		return userservice.User{}, codes.UserNotFound
 	}
 
 	user.UserCenterUser = rep.User
@@ -192,12 +167,7 @@ func (service *defaultService) GetByUsername(ctx context.Context, cmd GetByUsern
 	return user, nil
 }
 
-type CreateCommand struct {
-	Username string
-	Password string
-}
-
-func (service *defaultService) Create(ctx context.Context, cmd CreateCommand) (uid uint32, err error) {
+func (service *defaultService) Create(ctx context.Context, cmd userservice.CreateCommand) (uid uint32, err error) {
 	rep, err := service.userCenterClient.CreateUser(ctx, &usercenterproto.CreateUserRequest{
 		Username: cmd.Username,
 		Password: cmd.Password,
@@ -232,7 +202,7 @@ func (service *defaultService) Create(ctx context.Context, cmd CreateCommand) (u
 		return 0, codes.UserAlreadyExists
 	}
 
-	user := User{
+	user := userservice.User{
 		UID: rep.UID,
 	}
 
@@ -244,12 +214,7 @@ func (service *defaultService) Create(ctx context.Context, cmd CreateCommand) (u
 	return user.UID, nil
 }
 
-type ValidatePasswordCommand struct {
-	Username string
-	Password string
-}
-
-func (service *defaultService) ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error {
+func (service *defaultService) ValidatePassword(ctx context.Context, cmd userservice.ValidatePasswordCommand) error {
 	rep, err := service.userCenterClient.ValidatePassword(ctx, &usercenterproto.ValidatePasswordRequest{
 		Username: cmd.Username,
 		Password: cmd.Password,

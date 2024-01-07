@@ -15,9 +15,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
-	"github.com/liangjunmo/goproject/internal/goproject/accountservice"
 	"github.com/liangjunmo/goproject/internal/goproject/api"
-	"github.com/liangjunmo/goproject/internal/goproject/userservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/accountservice/accountserviceimpl"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice/userserviceimpl"
 )
 
 type APIServerConfig struct {
@@ -58,10 +58,10 @@ func RunAPIServer(config APIServerConfig) {
 	}()
 
 	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
-	userService := userservice.ProvideService(db, redisClient, userCenterClient)
+	userService := userserviceimpl.ProvideService(db, redisClient, userCenterClient)
 
-	accountService := accountservice.ProvideService(
-		accountservice.Config{
+	accountService := accountserviceimpl.ProvideService(
+		accountserviceimpl.Config{
 			JWTKey: config.JWTKey,
 		},
 		redisClient,

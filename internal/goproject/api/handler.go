@@ -10,8 +10,8 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/goproject/accountservice"
-	"github.com/liangjunmo/goproject/internal/goproject/userservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/accountservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
 )
 
 var (

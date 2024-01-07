@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
 
@@ -34,7 +35,7 @@ func TestDefaultService(t *testing.T) {
 	t.Run("List", func(t *testing.T) {
 		beforeTest(t)
 
-		repository.On("List", ctx, mock.IsType(criteria{})).Return(pagination.DefaultPagination{}, []User{{UID: 1}}, nil)
+		repository.On("List", ctx, mock.IsType(criteria{})).Return(pagination.DefaultPagination{}, []userservice.User{{UID: 1}}, nil)
 
 		userCenterClient.
 			On("SearchUser", ctx, mock.IsType(&usercenterproto.SearchUserRequest{})).
@@ -42,7 +43,7 @@ func TestDefaultService(t *testing.T) {
 				Users: map[uint32]*usercenterproto.User{1: {UID: 1}},
 			}, nil)
 
-		_, users, err := service.List(ctx, ListCommand{})
+		_, users, err := service.List(ctx, userservice.ListCommand{})
 		require.Nil(t, err)
 		require.Equal(t, uint32(1), users[0].UID)
 		require.Equal(t, uint32(1), users[0].UserCenterUser.UID)
@@ -57,9 +58,9 @@ func TestDefaultService(t *testing.T) {
 				Users: map[uint32]*usercenterproto.User{1: {UID: 1}},
 			}, nil)
 
-		repository.On("Search", ctx, mock.IsType(criteria{})).Return(map[uint32]User{1: {UID: 1}}, nil)
+		repository.On("Search", ctx, mock.IsType(criteria{})).Return(map[uint32]userservice.User{1: {UID: 1}}, nil)
 
-		users, err := service.Search(ctx, SearchCommand{Uids: []uint32{1}})
+		users, err := service.Search(ctx, userservice.SearchCommand{Uids: []uint32{1}})
 		require.Nil(t, err)
 		require.Equal(t, uint32(1), users[1].UID)
 		require.Equal(t, uint32(1), users[1].UserCenterUser.UID)
@@ -68,7 +69,7 @@ func TestDefaultService(t *testing.T) {
 	t.Run("Get", func(t *testing.T) {
 		beforeTest(t)
 
-		repository.On("Get", ctx, uint32(1)).Return(User{UID: 1}, true, nil)
+		repository.On("Get", ctx, uint32(1)).Return(userservice.User{UID: 1}, true, nil)
 
 		userCenterClient.
 			On("GetUserByUID", ctx, mock.IsType(&usercenterproto.GetUserByUIDRequest{})).
@@ -76,7 +77,7 @@ func TestDefaultService(t *testing.T) {
 				User: &usercenterproto.User{UID: 1},
 			}, nil)
 
-		user, err := service.Get(ctx, GetCommand{UID: 1})
+		user, err := service.Get(ctx, userservice.GetCommand{UID: 1})
 		require.Nil(t, err)
 		require.Equal(t, uint32(1), user.UID)
 		require.Equal(t, uint32(1), user.UserCenterUser.UID)
@@ -94,9 +95,9 @@ func TestDefaultService(t *testing.T) {
 				},
 			}, nil)
 
-		repository.On("Get", ctx, uint32(1)).Return(User{UID: 1}, true, nil)
+		repository.On("Get", ctx, uint32(1)).Return(userservice.User{UID: 1}, true, nil)
 
-		user, err := service.GetByUsername(ctx, GetByUsernameCommand{Username: "user"})
+		user, err := service.GetByUsername(ctx, userservice.GetByUsernameCommand{Username: "user"})
 		require.Nil(t, err)
 		require.Equal(t, uint32(1), user.UID)
 		require.Equal(t, "user", user.UserCenterUser.Username)
@@ -116,10 +117,10 @@ func TestDefaultService(t *testing.T) {
 
 		mutexProvider.On("ProvideCreateUserMutex", uint32(1)).Return(mutex)
 
-		repository.On("Get", ctx, uint32(1)).Return(User{}, false, nil)
-		repository.On("Create", ctx, mock.IsType(&User{})).Return(nil)
+		repository.On("Get", ctx, uint32(1)).Return(userservice.User{}, false, nil)
+		repository.On("Create", ctx, mock.IsType(&userservice.User{})).Return(nil)
 
-		uid, err := service.Create(ctx, CreateCommand{
+		uid, err := service.Create(ctx, userservice.CreateCommand{
 			Username: "user",
 			Password: "pass",
 		})
@@ -134,7 +135,7 @@ func TestDefaultService(t *testing.T) {
 			On("ValidatePassword", ctx, mock.IsType(&usercenterproto.ValidatePasswordRequest{})).
 			Return(&usercenterproto.ValidatePasswordReply{}, nil)
 
-		err := service.ValidatePassword(ctx, ValidatePasswordCommand{
+		err := service.ValidatePassword(ctx, userservice.ValidatePasswordCommand{
 			Username: "user",
 			Password: "pass",
 		})
@@ -184,33 +185,33 @@ func (mocked *mockedRepository) Rollback() error {
 	return nil
 }
 
-func (mocked *mockedRepository) List(ctx context.Context, criteria criteria) (pagination.Pagination, []User, error) {
+func (mocked *mockedRepository) List(ctx context.Context, criteria criteria) (pagination.Pagination, []userservice.User, error) {
 	args := mocked.Called(ctx, criteria)
 
 	if args.Get(1) == nil {
 		return nil, nil, args.Error(2)
 	}
 
-	return args.Get(0).(pagination.Pagination), args.Get(1).([]User), args.Error(2)
+	return args.Get(0).(pagination.Pagination), args.Get(1).([]userservice.User), args.Error(2)
 }
 
-func (mocked *mockedRepository) Search(ctx context.Context, criteria criteria) (map[uint32]User, error) {
+func (mocked *mockedRepository) Search(ctx context.Context, criteria criteria) (map[uint32]userservice.User, error) {
 	args := mocked.Called(ctx, criteria)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(map[uint32]User), args.Error(1)
+	return args.Get(0).(map[uint32]userservice.User), args.Error(1)
 }
 
-func (mocked *mockedRepository) Get(ctx context.Context, uid uint32) (user User, exist bool, err error) {
+func (mocked *mockedRepository) Get(ctx context.Context, uid uint32) (user userservice.User, exist bool, err error) {
 	args := mocked.Called(ctx, uid)
 
-	return args.Get(0).(User), args.Bool(1), args.Error(2)
+	return args.Get(0).(userservice.User), args.Bool(1), args.Error(2)
 }
 
-func (mocked *mockedRepository) Create(ctx context.Context, user *User) error {
+func (mocked *mockedRepository) Create(ctx context.Context, user *userservice.User) error {
 	args := mocked.Called(ctx, user)
 
 	return args.Error(0)

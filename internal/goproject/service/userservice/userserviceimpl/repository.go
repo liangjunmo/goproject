@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
 	"github.com/liangjunmo/goproject/internal/pkg/pagination"
 )
 
@@ -13,10 +14,10 @@ type repository interface {
 	Begin() (repository, error)
 	Commit() error
 	Rollback() error
-	List(ctx context.Context, criteria criteria) (pagination.Pagination, []User, error)
-	Search(ctx context.Context, criteria criteria) (map[uint32]User, error)
-	Get(ctx context.Context, uid uint32) (user User, exist bool, err error)
-	Create(ctx context.Context, user *User) error
+	List(ctx context.Context, criteria criteria) (pagination.Pagination, []userservice.User, error)
+	Search(ctx context.Context, criteria criteria) (map[uint32]userservice.User, error)
+	Get(ctx context.Context, uid uint32) (user userservice.User, exist bool, err error)
+	Create(ctx context.Context, user *userservice.User) error
 }
 
 var (
@@ -64,8 +65,8 @@ func (repository *defaultRepository) Rollback() error {
 	return repository.db.Rollback().Error
 }
 
-func (repository *defaultRepository) List(ctx context.Context, criteria criteria) (pagination.Pagination, []User, error) {
-	db := repository.db.WithContext(ctx).Model(&User{})
+func (repository *defaultRepository) List(ctx context.Context, criteria criteria) (pagination.Pagination, []userservice.User, error) {
+	db := repository.db.WithContext(ctx).Model(&userservice.User{})
 
 	if len(criteria.uids) != 0 {
 		db = db.Where("id in (?)", criteria.uids)
@@ -73,7 +74,7 @@ func (repository *defaultRepository) List(ctx context.Context, criteria criteria
 
 	var (
 		count int64
-		users []User
+		users []userservice.User
 	)
 
 	err := db.Count(&count).Error
@@ -99,21 +100,21 @@ func (repository *defaultRepository) List(ctx context.Context, criteria criteria
 	return p, users, nil
 }
 
-func (repository *defaultRepository) Search(ctx context.Context, criteria criteria) (map[uint32]User, error) {
-	db := repository.db.WithContext(ctx).Model(&User{})
+func (repository *defaultRepository) Search(ctx context.Context, criteria criteria) (map[uint32]userservice.User, error) {
+	db := repository.db.WithContext(ctx).Model(&userservice.User{})
 
 	if len(criteria.uids) != 0 {
 		db = db.Where("id in (?)", criteria.uids)
 	}
 
-	var users []User
+	var users []userservice.User
 
 	err := db.Find(&users).Error
 	if err != nil {
 		return nil, err
 	}
 
-	m := make(map[uint32]User)
+	m := make(map[uint32]userservice.User)
 
 	for _, u := range users {
 		m[u.UID] = u
@@ -122,20 +123,20 @@ func (repository *defaultRepository) Search(ctx context.Context, criteria criter
 	return m, nil
 }
 
-func (repository *defaultRepository) Get(ctx context.Context, uid uint32) (user User, exist bool, err error) {
+func (repository *defaultRepository) Get(ctx context.Context, uid uint32) (user userservice.User, exist bool, err error) {
 	err = repository.db.WithContext(ctx).Take(&user, "uid = ?", uid).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return User{}, false, nil
+			return userservice.User{}, false, nil
 		}
 
-		return User{}, false, err
+		return userservice.User{}, false, err
 	}
 
 	return user, true, nil
 }
 
-func (repository *defaultRepository) Create(ctx context.Context, user *User) error {
+func (repository *defaultRepository) Create(ctx context.Context, user *userservice.User) error {
 	return repository.db.WithContext(ctx).Create(user).Error
 }
 

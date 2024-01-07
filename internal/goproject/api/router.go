@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gotraceutil"
 
-	"github.com/liangjunmo/goproject/internal/goproject/accountservice"
-	"github.com/liangjunmo/goproject/internal/goproject/userservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/accountservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
 
 	swaggerFiles "github.com/swaggo/files"
 	swaggerGin "github.com/swaggo/gin-swagger"

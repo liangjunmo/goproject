@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -18,7 +18,7 @@ func TestDefaultMutexProvider(t *testing.T) {
 	t.Run("ProvideCreateUserMutex", func(t *testing.T) {
 		mutexProvider := newDefaultMutexProvider(sync)
 
-		mutex := mutexProvider.ProvideCreateUserMutex(1)
+		mutex := mutexProvider.ProvideCreateUserMutex("user")
 		require.IsType(t, &createUserMutex{}, mutex)
 	})
 
@@ -30,7 +30,7 @@ func TestCreateUserMutex(t *testing.T) {
 	sync := redsync.New(goredis.NewPool(redisClient))
 
 	t.Run("LockAndUnlock", func(t *testing.T) {
-		mutex := newCreateUserMutex(sync, 1)
+		mutex := newCreateUserMutex(sync, "user")
 
 		ctx := context.Background()
 

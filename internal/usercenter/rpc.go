@@ -12,7 +12,7 @@ import (
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
 	"github.com/liangjunmo/goproject/internal/usercenter/rpc"
-	"github.com/liangjunmo/goproject/internal/usercenter/userservice"
+	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice/userserviceimpl"
 )
 
 type RPCServerConfig struct {
@@ -32,7 +32,7 @@ func RunRPCServer(config RPCServerConfig) {
 	db := initDB(config.DB, config.Debug)
 	redisClient := initRedis(config.Redis)
 
-	userService := userservice.ProvideService(db, redisClient)
+	userService := userserviceimpl.ProvideService(db, redisClient)
 
 	rpcServer := rpc.NewServer(userService)
 

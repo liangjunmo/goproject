@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -9,13 +9,14 @@ import (
 
 	"github.com/liangjunmo/goproject/internal/pkg/dbutil"
 	"github.com/liangjunmo/goproject/internal/testutil"
+	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice"
 )
 
 func TestDefaultRepository(t *testing.T) {
 	db := testutil.InitDB()
 
 	beforeTest := func(t *testing.T) {
-		err := dbutil.TruncateTable(db, []interface{}{&User{}})
+		err := dbutil.TruncateTable(db, []interface{}{&userservice.User{}})
 		require.Nil(t, err)
 	}
 
@@ -24,14 +25,14 @@ func TestDefaultRepository(t *testing.T) {
 
 		tx := db.Begin()
 
-		tx.Create(&User{UID: 1})
+		tx.Create(&userservice.User{UID: 1})
 
 		repository := newDefaultRepository(tx)
 
 		err := repository.Commit()
 		require.Nil(t, err)
 
-		err = db.Take(&User{}, 1).Error
+		err = db.Take(&userservice.User{}, 1).Error
 		require.Nil(t, err)
 	})
 
@@ -40,21 +41,21 @@ func TestDefaultRepository(t *testing.T) {
 
 		tx := db.Begin()
 
-		tx.Create(&User{UID: 1})
+		tx.Create(&userservice.User{UID: 1})
 
 		repository := newDefaultRepository(tx)
 
 		err := repository.Rollback()
 		require.Nil(t, err)
 
-		err = db.Take(&User{}, 1).Error
+		err = db.Take(&userservice.User{}, 1).Error
 		require.ErrorIs(t, err, gorm.ErrRecordNotFound)
 	})
 
 	t.Run("Search", func(t *testing.T) {
 		beforeTest(t)
 
-		db.Create(&User{
+		db.Create(&userservice.User{
 			UID:      1,
 			Username: "user",
 		})
@@ -73,7 +74,7 @@ func TestDefaultRepository(t *testing.T) {
 	t.Run("Get", func(t *testing.T) {
 		beforeTest(t)
 
-		db.Create(&User{UID: 1})
+		db.Create(&userservice.User{UID: 1})
 
 		repository := newDefaultRepository(db)
 
@@ -86,7 +87,7 @@ func TestDefaultRepository(t *testing.T) {
 	t.Run("GetByUsername", func(t *testing.T) {
 		beforeTest(t)
 
-		db.Create(&User{Username: "user"})
+		db.Create(&userservice.User{Username: "user"})
 
 		repository := newDefaultRepository(db)
 
@@ -101,14 +102,14 @@ func TestDefaultRepository(t *testing.T) {
 
 		repository := newDefaultRepository(db)
 
-		err := repository.Create(context.Background(), &User{
+		err := repository.Create(context.Background(), &userservice.User{
 			UID:      1,
 			Username: "user",
 			Password: "pass",
 		})
 		require.Nil(t, err)
 
-		var user User
+		var user userservice.User
 
 		err = db.Take(&user, 1).Error
 		require.Nil(t, err)

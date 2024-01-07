@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -12,17 +12,10 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/liangjunmo/goproject/internal/codes"
+	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice"
 )
 
-type Service interface {
-	Search(ctx context.Context, cmd SearchCommand) (map[uint32]User, error)
-	Get(ctx context.Context, cmd GetCommand) (User, error)
-	GetByUsername(ctx context.Context, cmd GetByUsernameCommand) (User, error)
-	Create(ctx context.Context, cmd CreateCommand) (uid uint32, err error)
-	ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error
-}
-
-func ProvideService(db *gorm.DB, redisClient *redis.Client) Service {
+func ProvideService(db *gorm.DB, redisClient *redis.Client) userservice.Service {
 	return newDefaultService(
 		newDefaultRepository(db),
 		newDefaultMutexProvider(redsync.New(goredis.NewPool(redisClient))),
@@ -43,12 +36,7 @@ func newDefaultService(repository repository, mutexProvider mutexProvider) *defa
 	}
 }
 
-type SearchCommand struct {
-	Uids     []uint32
-	Username string
-}
-
-func (service *defaultService) Search(ctx context.Context, cmd SearchCommand) (map[uint32]User, error) {
+func (service *defaultService) Search(ctx context.Context, cmd userservice.SearchCommand) (map[uint32]userservice.User, error) {
 	users, err := service.repository.Search(ctx, criteria{
 		uids:     cmd.Uids,
 		username: cmd.Username,
@@ -60,46 +48,33 @@ func (service *defaultService) Search(ctx context.Context, cmd SearchCommand) (m
 	return users, nil
 }
 
-type GetCommand struct {
-	UID uint32
-}
-
-func (service *defaultService) Get(ctx context.Context, cmd GetCommand) (User, error) {
+func (service *defaultService) Get(ctx context.Context, cmd userservice.GetCommand) (userservice.User, error) {
 	user, exist, err := service.repository.Get(ctx, cmd.UID)
 	if err != nil {
-		return User{}, fmt.Errorf("%w, %v", codes.InternalServerError, err)
+		return userservice.User{}, fmt.Errorf("%w, %v", codes.InternalServerError, err)
 	}
 
 	if !exist {
-		return User{}, codes.UserNotFound
+		return userservice.User{}, codes.UserNotFound
 	}
 
 	return user, nil
 }
 
-type GetByUsernameCommand struct {
-	Username string
-}
-
-func (service *defaultService) GetByUsername(ctx context.Context, cmd GetByUsernameCommand) (User, error) {
+func (service *defaultService) GetByUsername(ctx context.Context, cmd userservice.GetByUsernameCommand) (userservice.User, error) {
 	user, exist, err := service.repository.GetByUsername(ctx, cmd.Username)
 	if err != nil {
-		return User{}, fmt.Errorf("%w, %v", codes.InternalServerError, err)
+		return userservice.User{}, fmt.Errorf("%w, %v", codes.InternalServerError, err)
 	}
 
 	if !exist {
-		return User{}, codes.UserNotFound
+		return userservice.User{}, codes.UserNotFound
 	}
 
 	return user, nil
 }
 
-type CreateCommand struct {
-	Username string
-	Password string
-}
-
-func (service *defaultService) Create(ctx context.Context, cmd CreateCommand) (uid uint32, err error) {
+func (service *defaultService) Create(ctx context.Context, cmd userservice.CreateCommand) (uid uint32, err error) {
 	m := service.mutexProvider.ProvideCreateUserMutex(cmd.Username)
 
 	err = m.Lock(ctx)
@@ -122,7 +97,7 @@ func (service *defaultService) Create(ctx context.Context, cmd CreateCommand) (u
 		return user.UID, nil
 	}
 
-	user = User{}
+	user = userservice.User{}
 	user.Username = cmd.Username
 	user.Password = cryptPassword(cmd.Password)
 
@@ -134,12 +109,7 @@ func (service *defaultService) Create(ctx context.Context, cmd CreateCommand) (u
 	return user.UID, nil
 }
 
-type ValidatePasswordCommand struct {
-	Username string
-	Password string
-}
-
-func (service *defaultService) ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error {
+func (service *defaultService) ValidatePassword(ctx context.Context, cmd userservice.ValidatePasswordCommand) error {
 	user, exist, err := service.repository.GetByUsername(ctx, cmd.Username)
 	if err != nil {
 		return fmt.Errorf("%w, %v", codes.InternalServerError, err)

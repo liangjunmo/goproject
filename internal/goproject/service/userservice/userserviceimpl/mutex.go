@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 )
 
 type mutexProvider interface {
-	ProvideCreateUserMutex(username string) mutex
+	ProvideCreateUserMutex(uid uint32) mutex
 }
 
 type defaultMutexProvider struct {
@@ -21,8 +21,8 @@ func newDefaultMutexProvider(sync *redsync.Redsync) *defaultMutexProvider {
 	}
 }
 
-func (provider *defaultMutexProvider) ProvideCreateUserMutex(username string) mutex {
-	return newCreateUserMutex(provider.sync, username)
+func (provider *defaultMutexProvider) ProvideCreateUserMutex(uid uint32) mutex {
+	return newCreateUserMutex(provider.sync, uid)
 }
 
 type mutex interface {
@@ -34,11 +34,11 @@ type createUserMutex struct {
 	mutex *redsync.Mutex
 }
 
-func newCreateUserMutex(sync *redsync.Redsync, username string) mutex {
+func newCreateUserMutex(sync *redsync.Redsync, uid uint32) mutex {
 	mutex := &createUserMutex{}
 
 	mutex.mutex = sync.NewMutex(
-		mutex.key(username),
+		mutex.key(uid),
 		redsync.WithTries(1),
 	)
 
@@ -53,6 +53,6 @@ func (mutex *createUserMutex) Unlock(ctx context.Context) (ok bool, err error) {
 	return mutex.mutex.UnlockContext(ctx)
 }
 
-func (mutex *createUserMutex) key(username string) string {
-	return fmt.Sprintf("goproject-usercenter-create-user-mutex-%s", username)
+func (mutex *createUserMutex) key(uid uint32) string {
+	return fmt.Sprintf("goproject-create-user-mutex-%d", uid)
 }

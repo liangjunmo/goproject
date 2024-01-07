@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
-	"github.com/liangjunmo/goproject/internal/goproject/userservice"
+	"github.com/liangjunmo/goproject/internal/goproject/service/userservice/userserviceimpl"
 )
 
 type WorkerServerConfig struct {
@@ -51,7 +51,7 @@ func RunWorkerServer(config WorkerServerConfig) {
 	ctx, cancel := context.WithCancel(context.Background())
 	wg := &sync.WaitGroup{}
 
-	userservice.RunScheduler(ctx, wg, db, redisClient, userCenterClient)
+	userserviceimpl.RunScheduler(ctx, wg, db, redisClient, userCenterClient)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)

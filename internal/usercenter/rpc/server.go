@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
-	"github.com/liangjunmo/goproject/internal/usercenter/userservice"
+	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice"
 )
 
 type Server struct {

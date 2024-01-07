@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 import (
 	"context"
@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+
+	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice"
 )
 
 func TestDefaultService(t *testing.T) {
@@ -28,9 +30,9 @@ func TestDefaultService(t *testing.T) {
 	t.Run("Search", func(t *testing.T) {
 		beforeTest(t)
 
-		repository.On("Search", ctx, mock.IsType(criteria{})).Return(map[uint32]User{1: {UID: 1}}, nil)
+		repository.On("Search", ctx, mock.IsType(criteria{})).Return(map[uint32]userservice.User{1: {UID: 1}}, nil)
 
-		users, err := service.Search(ctx, SearchCommand{})
+		users, err := service.Search(ctx, userservice.SearchCommand{})
 		require.Nil(t, err)
 		require.Equal(t, uint32(1), users[1].UID)
 	})
@@ -38,9 +40,9 @@ func TestDefaultService(t *testing.T) {
 	t.Run("Get", func(t *testing.T) {
 		beforeTest(t)
 
-		repository.On("Get", ctx, uint32(1)).Return(User{UID: 1}, true, nil)
+		repository.On("Get", ctx, uint32(1)).Return(userservice.User{UID: 1}, true, nil)
 
-		user, err := service.Get(ctx, GetCommand{UID: 1})
+		user, err := service.Get(ctx, userservice.GetCommand{UID: 1})
 		require.Nil(t, err)
 		require.Equal(t, uint32(1), user.UID)
 	})
@@ -48,9 +50,9 @@ func TestDefaultService(t *testing.T) {
 	t.Run("GetByUsername", func(t *testing.T) {
 		beforeTest(t)
 
-		repository.On("GetByUsername", ctx, "user").Return(User{Username: "user"}, true, nil)
+		repository.On("GetByUsername", ctx, "user").Return(userservice.User{Username: "user"}, true, nil)
 
-		user, err := service.GetByUsername(ctx, GetByUsernameCommand{Username: "user"})
+		user, err := service.GetByUsername(ctx, userservice.GetByUsernameCommand{Username: "user"})
 		require.Nil(t, err)
 		require.Equal(t, "user", user.Username)
 	})
@@ -63,10 +65,10 @@ func TestDefaultService(t *testing.T) {
 
 		mutexProvider.On("ProvideCreateUserMutex", "user").Return(mutex)
 
-		repository.On("GetByUsername", ctx, "user").Return(User{}, false, nil)
-		repository.On("Create", ctx, mock.IsType(&User{})).Return(nil)
+		repository.On("GetByUsername", ctx, "user").Return(userservice.User{}, false, nil)
+		repository.On("Create", ctx, mock.IsType(&userservice.User{})).Return(nil)
 
-		_, err := service.Create(ctx, CreateCommand{
+		_, err := service.Create(ctx, userservice.CreateCommand{
 			Username: "user",
 			Password: "pass",
 		})
@@ -76,11 +78,11 @@ func TestDefaultService(t *testing.T) {
 	t.Run("ValidatePassword", func(t *testing.T) {
 		beforeTest(t)
 
-		user := User{Password: cryptPassword("pass")}
+		user := userservice.User{Password: cryptPassword("pass")}
 
 		repository.On("GetByUsername", ctx, "user").Return(user, true, nil)
 
-		err := service.ValidatePassword(ctx, ValidatePasswordCommand{
+		err := service.ValidatePassword(ctx, userservice.ValidatePasswordCommand{
 			Username: "user",
 			Password: "pass",
 		})
@@ -130,29 +132,29 @@ func (mocked *mockedRepository) Rollback() error {
 	return nil
 }
 
-func (mocked *mockedRepository) Search(ctx context.Context, criteria criteria) (map[uint32]User, error) {
+func (mocked *mockedRepository) Search(ctx context.Context, criteria criteria) (map[uint32]userservice.User, error) {
 	args := mocked.Called(ctx, criteria)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(map[uint32]User), args.Error(1)
+	return args.Get(0).(map[uint32]userservice.User), args.Error(1)
 }
 
-func (mocked *mockedRepository) Get(ctx context.Context, uid uint32) (user User, exist bool, err error) {
+func (mocked *mockedRepository) Get(ctx context.Context, uid uint32) (user userservice.User, exist bool, err error) {
 	args := mocked.Called(ctx, uid)
 
-	return args.Get(0).(User), args.Bool(1), args.Error(2)
+	return args.Get(0).(userservice.User), args.Bool(1), args.Error(2)
 }
 
-func (mocked *mockedRepository) GetByUsername(ctx context.Context, username string) (user User, exist bool, err error) {
+func (mocked *mockedRepository) GetByUsername(ctx context.Context, username string) (user userservice.User, exist bool, err error) {
 	args := mocked.Called(ctx, username)
 
-	return args.Get(0).(User), args.Bool(1), args.Error(2)
+	return args.Get(0).(userservice.User), args.Bool(1), args.Error(2)
 }
 
-func (mocked *mockedRepository) Create(ctx context.Context, user *User) error {
+func (mocked *mockedRepository) Create(ctx context.Context, user *userservice.User) error {
 	args := mocked.Called(ctx, user)
 
 	return args.Error(0)
