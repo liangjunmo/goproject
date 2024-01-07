@@ -4,8 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/go-redsync/redsync/v4"
-	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
 	"github.com/stretchr/testify/require"
 
 	"github.com/liangjunmo/goproject/internal/testutil"
@@ -13,26 +11,43 @@ import (
 
 func TestDefaultMutexProvider(t *testing.T) {
 	redisClient := testutil.InitRedis()
-	sync := redsync.New(goredis.NewPool(redisClient))
+	defer redisClient.Close()
+
+	sync := testutil.InitRedSync(redisClient)
+
+	var mutexProvider *defaultMutexProvider
+
+	beforeTest := func(t *testing.T) {
+		mutexProvider = newDefaultMutexProvider(sync)
+	}
 
 	t.Run("ProvideCreateUserMutex", func(t *testing.T) {
-		mutexProvider := newDefaultMutexProvider(sync)
+		beforeTest(t)
 
 		mutex := mutexProvider.ProvideCreateUserMutex("user")
 		require.IsType(t, &createUserMutex{}, mutex)
 	})
-
-	redisClient.Close()
 }
 
 func TestCreateUserMutex(t *testing.T) {
 	redisClient := testutil.InitRedis()
-	sync := redsync.New(goredis.NewPool(redisClient))
+	defer redisClient.Close()
+
+	sync := testutil.InitRedSync(redisClient)
+
+	var (
+		mutex *createUserMutex
+		ctx   context.Context
+	)
+
+	beforeTest := func(t *testing.T) {
+		mutex = newCreateUserMutex(sync, "user")
+
+		ctx = context.Background()
+	}
 
 	t.Run("LockAndUnlock", func(t *testing.T) {
-		mutex := newCreateUserMutex(sync, "user")
-
-		ctx := context.Background()
+		beforeTest(t)
 
 		err := mutex.Lock(ctx)
 		require.Nil(t, err)
@@ -41,6 +56,4 @@ func TestCreateUserMutex(t *testing.T) {
 		require.Nil(t, err)
 		require.True(t, ok)
 	})
-
-	redisClient.Close()
 }

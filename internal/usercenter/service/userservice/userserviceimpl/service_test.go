@@ -23,14 +23,18 @@ func TestDefaultService(t *testing.T) {
 		mutex = &mockedMutex{}
 		mutexProvider = &mockedMutexProvider{}
 		repository = &mockedRepository{}
+
 		service = newDefaultService(repository, mutexProvider)
+
 		ctx = context.Background()
 	}
 
 	t.Run("Search", func(t *testing.T) {
 		beforeTest(t)
 
-		repository.On("Search", ctx, mock.IsType(criteria{})).Return(map[uint32]userservice.User{1: {UID: 1}}, nil)
+		repository.
+			On("Search", ctx, mock.IsType(criteria{})).
+			Return(map[uint32]userservice.User{1: {UID: 1}}, nil)
 
 		users, err := service.Search(ctx, userservice.SearchCommand{})
 		require.Nil(t, err)

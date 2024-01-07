@@ -14,22 +14,39 @@ import (
 
 func TestDefaultRepository(t *testing.T) {
 	db := testutil.InitDB()
+	defer func() {
+		db, _ := db.DB()
+		db.Close()
+	}()
+
+	var (
+		repository *defaultRepository
+		ctx        context.Context
+	)
 
 	beforeTest := func(t *testing.T) {
 		err := dbutil.TruncateTable(db, []interface{}{&userservice.User{}})
 		require.Nil(t, err)
+
+		repository = newDefaultRepository(db)
+
+		ctx = context.Background()
 	}
 
 	t.Run("Commit", func(t *testing.T) {
 		beforeTest(t)
 
-		tx := db.Begin()
+		repository, err := repository.Begin()
+		require.Nil(t, err)
 
-		tx.Create(&userservice.User{UID: 1})
+		err = repository.Create(ctx, &userservice.User{
+			UID:      1,
+			Username: "user",
+			Password: "pass",
+		})
+		require.Nil(t, err)
 
-		repository := newDefaultRepository(tx)
-
-		err := repository.Commit()
+		err = repository.Commit()
 		require.Nil(t, err)
 
 		err = db.Take(&userservice.User{}, 1).Error
@@ -39,13 +56,17 @@ func TestDefaultRepository(t *testing.T) {
 	t.Run("Rollback", func(t *testing.T) {
 		beforeTest(t)
 
-		tx := db.Begin()
+		repository, err := repository.Begin()
+		require.Nil(t, err)
 
-		tx.Create(&userservice.User{UID: 1})
+		err = repository.Create(ctx, &userservice.User{
+			UID:      1,
+			Username: "user",
+			Password: "pass",
+		})
+		require.Nil(t, err)
 
-		repository := newDefaultRepository(tx)
-
-		err := repository.Rollback()
+		err = repository.Rollback()
 		require.Nil(t, err)
 
 		err = db.Take(&userservice.User{}, 1).Error
@@ -60,9 +81,7 @@ func TestDefaultRepository(t *testing.T) {
 			Username: "user",
 		})
 
-		repository := newDefaultRepository(db)
-
-		users, err := repository.Search(context.Background(), criteria{
+		users, err := repository.Search(ctx, criteria{
 			uids:     []uint32{1},
 			username: "user",
 		})
@@ -76,9 +95,7 @@ func TestDefaultRepository(t *testing.T) {
 
 		db.Create(&userservice.User{UID: 1})
 
-		repository := newDefaultRepository(db)
-
-		user, exist, err := repository.Get(context.Background(), 1)
+		user, exist, err := repository.Get(ctx, 1)
 		require.Nil(t, err)
 		require.True(t, exist)
 		require.Equal(t, uint32(1), user.UID)
@@ -89,9 +106,7 @@ func TestDefaultRepository(t *testing.T) {
 
 		db.Create(&userservice.User{Username: "user"})
 
-		repository := newDefaultRepository(db)
-
-		user, exist, err := repository.GetByUsername(context.Background(), "user")
+		user, exist, err := repository.GetByUsername(ctx, "user")
 		require.Nil(t, err)
 		require.True(t, exist)
 		require.Equal(t, "user", user.Username)
@@ -100,9 +115,7 @@ func TestDefaultRepository(t *testing.T) {
 	t.Run("Create", func(t *testing.T) {
 		beforeTest(t)
 
-		repository := newDefaultRepository(db)
-
-		err := repository.Create(context.Background(), &userservice.User{
+		err := repository.Create(ctx, &userservice.User{
 			UID:      1,
 			Username: "user",
 			Password: "pass",
@@ -117,9 +130,4 @@ func TestDefaultRepository(t *testing.T) {
 		require.Equal(t, "user", user.Username)
 		require.Equal(t, "pass", user.Password)
 	})
-
-	{
-		db, _ := db.DB()
-		db.Close()
-	}
 }

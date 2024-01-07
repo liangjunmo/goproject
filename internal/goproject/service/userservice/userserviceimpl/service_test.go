@@ -28,20 +28,27 @@ func TestDefaultService(t *testing.T) {
 		mutexProvider = &mockedMutexProvider{}
 		repository = &mockedRepository{}
 		userCenterClient = &mockedUserCenterClient{}
+
 		service = newDefaultService(repository, mutexProvider, userCenterClient)
+
 		ctx = context.Background()
 	}
 
 	t.Run("List", func(t *testing.T) {
 		beforeTest(t)
 
-		repository.On("List", ctx, mock.IsType(criteria{})).Return(pagination.DefaultPagination{}, []userservice.User{{UID: 1}}, nil)
+		repository.
+			On("List", ctx, mock.IsType(criteria{})).
+			Return(pagination.DefaultPagination{}, []userservice.User{{UID: 1}}, nil)
 
 		userCenterClient.
 			On("SearchUser", ctx, mock.IsType(&usercenterproto.SearchUserRequest{})).
-			Return(&usercenterproto.SearchUserReply{
-				Users: map[uint32]*usercenterproto.User{1: {UID: 1}},
-			}, nil)
+			Return(
+				&usercenterproto.SearchUserReply{
+					Users: map[uint32]*usercenterproto.User{1: {UID: 1}},
+				},
+				nil,
+			)
 
 		_, users, err := service.List(ctx, userservice.ListCommand{})
 		require.Nil(t, err)
@@ -54,11 +61,16 @@ func TestDefaultService(t *testing.T) {
 
 		userCenterClient.
 			On("SearchUser", ctx, mock.IsType(&usercenterproto.SearchUserRequest{})).
-			Return(&usercenterproto.SearchUserReply{
-				Users: map[uint32]*usercenterproto.User{1: {UID: 1}},
-			}, nil)
+			Return(
+				&usercenterproto.SearchUserReply{
+					Users: map[uint32]*usercenterproto.User{1: {UID: 1}},
+				},
+				nil,
+			)
 
-		repository.On("Search", ctx, mock.IsType(criteria{})).Return(map[uint32]userservice.User{1: {UID: 1}}, nil)
+		repository.
+			On("Search", ctx, mock.IsType(criteria{})).
+			Return(map[uint32]userservice.User{1: {UID: 1}}, nil)
 
 		users, err := service.Search(ctx, userservice.SearchCommand{Uids: []uint32{1}})
 		require.Nil(t, err)
@@ -73,9 +85,12 @@ func TestDefaultService(t *testing.T) {
 
 		userCenterClient.
 			On("GetUserByUID", ctx, mock.IsType(&usercenterproto.GetUserByUIDRequest{})).
-			Return(&usercenterproto.GetUserByUIDReply{
-				User: &usercenterproto.User{UID: 1},
-			}, nil)
+			Return(
+				&usercenterproto.GetUserByUIDReply{
+					User: &usercenterproto.User{UID: 1},
+				},
+				nil,
+			)
 
 		user, err := service.Get(ctx, userservice.GetCommand{UID: 1})
 		require.Nil(t, err)
@@ -88,12 +103,15 @@ func TestDefaultService(t *testing.T) {
 
 		userCenterClient.
 			On("GetUserByUsername", ctx, mock.IsType(&usercenterproto.GetUserByUsernameRequest{})).
-			Return(&usercenterproto.GetUserByUsernameReply{
-				User: &usercenterproto.User{
-					UID:      1,
-					Username: "user",
+			Return(
+				&usercenterproto.GetUserByUsernameReply{
+					User: &usercenterproto.User{
+						UID:      1,
+						Username: "user",
+					},
 				},
-			}, nil)
+				nil,
+			)
 
 		repository.On("Get", ctx, uint32(1)).Return(userservice.User{UID: 1}, true, nil)
 
@@ -108,9 +126,12 @@ func TestDefaultService(t *testing.T) {
 
 		userCenterClient.
 			On("CreateUser", ctx, mock.IsType(&usercenterproto.CreateUserRequest{})).
-			Return(&usercenterproto.CreateUserReply{
-				UID: 1,
-			}, nil)
+			Return(
+				&usercenterproto.CreateUserReply{
+					UID: 1,
+				},
+				nil,
+			)
 
 		mutex.On("Lock", ctx).Return(nil)
 		mutex.On("Unlock", ctx).Return(true, nil)

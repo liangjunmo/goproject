@@ -34,7 +34,7 @@ type createUserMutex struct {
 	mutex *redsync.Mutex
 }
 
-func newCreateUserMutex(sync *redsync.Redsync, uid uint32) mutex {
+func newCreateUserMutex(sync *redsync.Redsync, uid uint32) *createUserMutex {
 	mutex := &createUserMutex{}
 
 	mutex.mutex = sync.NewMutex(
