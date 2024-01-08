@@ -16,8 +16,11 @@ import (
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
 	"github.com/liangjunmo/goproject/internal/goproject/api"
-	"github.com/liangjunmo/goproject/internal/goproject/service/accountservice/accountserviceimpl"
-	"github.com/liangjunmo/goproject/internal/goproject/service/userservice/userserviceimpl"
+	"github.com/liangjunmo/goproject/internal/goproject/manager"
+	"github.com/liangjunmo/goproject/internal/goproject/mutex"
+	"github.com/liangjunmo/goproject/internal/goproject/repository"
+	"github.com/liangjunmo/goproject/internal/goproject/service"
+	"github.com/liangjunmo/goproject/internal/goproject/usecase"
 )
 
 type APIServerConfig struct {
@@ -37,7 +40,13 @@ func RunAPIServer(config APIServerConfig) {
 	initLogger()
 
 	db := initDB(config.DB, config.Debug)
+	defer func() {
+		db, _ := db.DB()
+		_ = db.Close()
+	}()
+
 	redisClient := initRedis(config.Redis)
+	defer redisClient.Close()
 
 	userCenterConn, err := grpc.Dial(
 		config.UserCenterRPCServerAddr,
@@ -47,24 +56,21 @@ func RunAPIServer(config APIServerConfig) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer userCenterConn.Close()
 
-	defer func() {
-		userCenterConn.Close()
+	userRepository := repository.NewUserRepository(db)
 
-		db, _ := db.DB()
-		_ = db.Close()
+	mutexProvider := mutex.NewProvider(initRedSync(redisClient))
 
-		_ = redisClient.Close()
-	}()
+	redisManager := manager.NewRedisManager(redisClient)
 
 	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
-	userService := userserviceimpl.ProvideService(db, redisClient, userCenterClient)
 
-	accountService := accountserviceimpl.ProvideService(
-		accountserviceimpl.Config{
-			JWTKey: config.JWTKey,
-		},
-		redisClient,
+	userService := service.NewUserService(userRepository, mutexProvider, userCenterClient)
+
+	accountUseCase := usecase.NewAccountUseCase(
+		usecase.AccountUseCaseConfig{JWTKey: config.JWTKey},
+		redisManager,
 		userService,
 	)
 
@@ -76,7 +82,7 @@ func RunAPIServer(config APIServerConfig) {
 			TracingIDKey: tracingKeys[0],
 		},
 		engine,
-		accountService,
+		accountUseCase,
 		userService,
 	)
 

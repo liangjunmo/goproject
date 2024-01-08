@@ -7,17 +7,17 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
-	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice"
+	"github.com/liangjunmo/goproject/internal/usercenter/service"
 )
 
 type Server struct {
 	usercenterproto.UnimplementedUserCenterServer
 
 	log         *logrus.Entry
-	userService userservice.Service
+	userService service.UserService
 }
 
-func NewServer(userService userservice.Service) *Server {
+func NewServer(userService service.UserService) *Server {
 	return &Server{
 		log:         logrus.WithField("tag", "usercenter.rpc.server"),
 		userService: userService,
@@ -25,7 +25,7 @@ func NewServer(userService userservice.Service) *Server {
 }
 
 func (server *Server) SearchUser(ctx context.Context, req *usercenterproto.SearchUserRequest) (*usercenterproto.SearchUserReply, error) {
-	users, err := server.userService.Search(ctx, userservice.SearchCommand{
+	users, err := server.userService.Search(ctx, service.SearchCommand{
 		Uids:     req.Uids,
 		Username: req.Username,
 	})
@@ -57,7 +57,7 @@ func (server *Server) SearchUser(ctx context.Context, req *usercenterproto.Searc
 }
 
 func (server *Server) GetUserByUID(ctx context.Context, req *usercenterproto.GetUserByUIDRequest) (*usercenterproto.GetUserByUIDReply, error) {
-	user, err := server.userService.Get(ctx, userservice.GetCommand{UID: req.UID})
+	user, err := server.userService.Get(ctx, service.GetCommand{UID: req.UID})
 	if err != nil {
 		server.log.WithContext(ctx).WithError(err).Error(err)
 
@@ -80,7 +80,7 @@ func (server *Server) GetUserByUID(ctx context.Context, req *usercenterproto.Get
 }
 
 func (server *Server) GetUserByUsername(ctx context.Context, req *usercenterproto.GetUserByUsernameRequest) (*usercenterproto.GetUserByUsernameReply, error) {
-	user, err := server.userService.GetByUsername(ctx, userservice.GetByUsernameCommand{Username: req.Username})
+	user, err := server.userService.GetByUsername(ctx, service.GetByUsernameCommand{Username: req.Username})
 	if err != nil {
 		server.log.WithContext(ctx).WithError(err).Error(err)
 
@@ -103,7 +103,7 @@ func (server *Server) GetUserByUsername(ctx context.Context, req *usercenterprot
 }
 
 func (server *Server) CreateUser(ctx context.Context, req *usercenterproto.CreateUserRequest) (*usercenterproto.CreateUserReply, error) {
-	uid, err := server.userService.Create(ctx, userservice.CreateCommand{
+	uid, err := server.userService.Create(ctx, service.CreateCommand{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -124,7 +124,7 @@ func (server *Server) CreateUser(ctx context.Context, req *usercenterproto.Creat
 }
 
 func (server *Server) ValidatePassword(ctx context.Context, req *usercenterproto.ValidatePasswordRequest) (*usercenterproto.ValidatePasswordReply, error) {
-	err := server.userService.ValidatePassword(ctx, userservice.ValidatePasswordCommand{
+	err := server.userService.ValidatePassword(ctx, service.ValidatePasswordCommand{
 		Username: req.Username,
 		Password: req.Password,
 	})

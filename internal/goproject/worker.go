@@ -12,7 +12,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
-	"github.com/liangjunmo/goproject/internal/goproject/service/userservice/userserviceimpl"
+	"github.com/liangjunmo/goproject/internal/goproject/mutex"
+	"github.com/liangjunmo/goproject/internal/goproject/repository"
+	"github.com/liangjunmo/goproject/internal/goproject/service"
 )
 
 type WorkerServerConfig struct {
@@ -30,28 +32,30 @@ func RunWorkerServer(config WorkerServerConfig) {
 	initLogger()
 
 	db := initDB(config.DB, config.Debug)
+	defer func() {
+		db, _ := db.DB()
+		_ = db.Close()
+	}()
+
 	redisClient := initRedis(config.Redis)
+	defer redisClient.Close()
 
 	userCenterConn, err := grpc.Dial(config.UserCenterRPCServerAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer userCenterConn.Close()
 
-	defer func() {
-		userCenterConn.Close()
+	userRepository := repository.NewUserRepository(db)
 
-		db, _ := db.DB()
-		_ = db.Close()
-
-		_ = redisClient.Close()
-	}()
+	mutexProvider := mutex.NewProvider(initRedSync(redisClient))
 
 	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	wg := &sync.WaitGroup{}
 
-	userserviceimpl.RunScheduler(ctx, wg, db, redisClient, userCenterClient)
+	service.RunUserScheduler(ctx, wg, userRepository, mutexProvider, userCenterClient)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)

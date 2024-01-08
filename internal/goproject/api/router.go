@@ -4,11 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/liangjunmo/gotraceutil"
 
-	"github.com/liangjunmo/goproject/internal/goproject/service/accountservice"
-	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
-
 	swaggerFiles "github.com/swaggo/files"
 	swaggerGin "github.com/swaggo/gin-swagger"
+
+	"github.com/liangjunmo/goproject/internal/goproject/service"
+	"github.com/liangjunmo/goproject/internal/goproject/usecase"
 
 	_ "github.com/liangjunmo/goproject/internal/goproject/api/swagger"
 )
@@ -18,7 +18,7 @@ import (
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-func Router(config Config, engine *gin.Engine, accountService accountservice.Service, userService userservice.Service) {
+func Router(config Config, engine *gin.Engine, accountService usecase.AccountUseCase, userService service.UserService) {
 	handler := newHandler(config, accountService, userService)
 
 	router(config.Debug, engine, handler)

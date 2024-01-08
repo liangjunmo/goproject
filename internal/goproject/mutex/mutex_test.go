@@ -1,4 +1,4 @@
-package userserviceimpl
+package mutex
 
 import (
 	"context"
@@ -8,27 +8,6 @@ import (
 
 	"github.com/liangjunmo/goproject/internal/testutil"
 )
-
-func TestDefaultMutexProvider(t *testing.T) {
-	redisClient := testutil.InitRedis()
-	defer redisClient.Close()
-
-	sync := testutil.InitRedSync(redisClient)
-
-	var mutexProvider *defaultMutexProvider
-
-	beforeTest := func(t *testing.T) {
-		mutexProvider = newDefaultMutexProvider(sync)
-	}
-
-	t.Run("ProvideCreateUserMutex", func(t *testing.T) {
-		beforeTest(t)
-
-		mutex := mutexProvider.ProvideCreateUserMutex(1)
-		require.IsType(t, &createUserMutex{}, mutex)
-	})
-
-}
 
 func TestCreateUserMutex(t *testing.T) {
 	redisClient := testutil.InitRedis()

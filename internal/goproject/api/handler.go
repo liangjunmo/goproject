@@ -10,8 +10,9 @@ import (
 	"github.com/spf13/cast"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/goproject/service/accountservice"
-	"github.com/liangjunmo/goproject/internal/goproject/service/userservice"
+	"github.com/liangjunmo/goproject/internal/goproject/model"
+	"github.com/liangjunmo/goproject/internal/goproject/service"
+	"github.com/liangjunmo/goproject/internal/goproject/usecase"
 )
 
 var (
@@ -20,11 +21,11 @@ var (
 
 type handler struct {
 	config         Config
-	accountService accountservice.Service
-	userService    userservice.Service
+	accountService usecase.AccountUseCase
+	userService    service.UserService
 }
 
-func newHandler(config Config, accountService accountservice.Service, userService userservice.Service) *handler {
+func newHandler(config Config, accountService usecase.AccountUseCase, userService service.UserService) *handler {
 	return &handler{
 		config:         config,
 		accountService: accountService,
@@ -70,9 +71,9 @@ func (handler *handler) buildResponseBody(c *gin.Context, data interface{}, err 
 	return body
 }
 
-func (handler *handler) getUserClaims(c *gin.Context) *accountservice.UserJwtClaims {
+func (handler *handler) getUserClaims(c *gin.Context) *model.UserJwtClaims {
 	user, _ := c.Get(ginCtxUserKey)
-	return user.(*accountservice.UserJwtClaims)
+	return user.(*model.UserJwtClaims)
 }
 
 // Ping
@@ -123,7 +124,7 @@ func (handler *handler) Login(c *gin.Context) {
 		return
 	}
 
-	ticket, failedCount, err := handler.accountService.Login(ctx, accountservice.LoginCommand{
+	ticket, failedCount, err := handler.accountService.Login(ctx, usecase.LoginCommand{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -175,7 +176,7 @@ func (handler *handler) CreateToken(c *gin.Context) {
 		return
 	}
 
-	token, err := handler.accountService.CreateToken(ctx, accountservice.CreateTokenCommand{Ticket: req.Ticket})
+	token, err := handler.accountService.CreateToken(ctx, usecase.CreateTokenCommand{Ticket: req.Ticket})
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.responseDefault(c, nil, err)
@@ -190,7 +191,7 @@ func (handler *handler) CreateToken(c *gin.Context) {
 func (handler *handler) Authorize(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	claims, err := handler.accountService.Authorize(ctx, accountservice.AuthorizeCommand{Token: c.GetHeader("Authorization")})
+	claims, err := handler.accountService.Authorize(ctx, usecase.AuthorizeCommand{Token: c.GetHeader("Authorization")})
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		c.Abort()
@@ -241,7 +242,7 @@ func (handler *handler) ListUser(c *gin.Context) {
 		return
 	}
 
-	p, users, err := handler.userService.List(ctx, userservice.ListCommand{Request: req.PaginationRequest})
+	p, users, err := handler.userService.List(ctx, service.ListCommand{Request: req.PaginationRequest})
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.responseDefault(c, nil, err)
@@ -318,7 +319,7 @@ func (handler *handler) SearchUser(c *gin.Context) {
 		uids = append(uids, cast.ToUint32(uid))
 	}
 
-	users, err := handler.userService.Search(ctx, userservice.SearchCommand{
+	users, err := handler.userService.Search(ctx, service.SearchCommand{
 		Uids:     uids,
 		Username: req.Username,
 	})
@@ -380,7 +381,7 @@ func (handler *handler) GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := handler.userService.Get(ctx, userservice.GetCommand{UID: req.UID})
+	user, err := handler.userService.Get(ctx, service.GetCommand{UID: req.UID})
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.responseDefault(c, nil, err)
@@ -430,7 +431,7 @@ func (handler *handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	uid, err := handler.userService.Create(ctx, userservice.CreateCommand{
+	uid, err := handler.userService.Create(ctx, service.CreateCommand{
 		Username: req.Username,
 		Password: req.Password,
 	})

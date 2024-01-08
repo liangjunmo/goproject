@@ -1,4 +1,4 @@
-package userserviceimpl
+package mutex
 
 import (
 	"context"
@@ -7,25 +7,7 @@ import (
 	"github.com/go-redsync/redsync/v4"
 )
 
-type mutexProvider interface {
-	ProvideCreateUserMutex(username string) mutex
-}
-
-type defaultMutexProvider struct {
-	sync *redsync.Redsync
-}
-
-func newDefaultMutexProvider(sync *redsync.Redsync) *defaultMutexProvider {
-	return &defaultMutexProvider{
-		sync: sync,
-	}
-}
-
-func (provider *defaultMutexProvider) ProvideCreateUserMutex(username string) mutex {
-	return newCreateUserMutex(provider.sync, username)
-}
-
-type mutex interface {
+type Mutex interface {
 	Lock(ctx context.Context) error
 	Unlock(ctx context.Context) (ok bool, err error)
 }

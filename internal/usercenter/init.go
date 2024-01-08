@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-redsync/redsync/v4"
+	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
 	"github.com/liangjunmo/gocode"
 	"github.com/liangjunmo/gotraceutil"
 	"github.com/liangjunmo/logrushook/reportcallerhook"
@@ -19,7 +21,7 @@ import (
 	gormlogger "gorm.io/gorm/logger"
 
 	"github.com/liangjunmo/goproject/internal/codes"
-	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice"
+	"github.com/liangjunmo/goproject/internal/usercenter/model"
 )
 
 type DBConfig struct {
@@ -103,7 +105,7 @@ func initDB(config DBConfig, debug bool) *gorm.DB {
 		log.Fatal(err)
 	}
 
-	err = db.AutoMigrate(&userservice.User{})
+	err = db.AutoMigrate(&model.User{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -123,4 +125,8 @@ func initRedis(config RedisConfig) *redis.Client {
 	}
 
 	return redisClient
+}
+
+func initRedSync(redisClient *redis.Client) *redsync.Redsync {
+	return redsync.New(goredis.NewPool(redisClient))
 }

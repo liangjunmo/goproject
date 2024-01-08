@@ -11,8 +11,10 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/liangjunmo/goproject/api/usercenterproto"
+	"github.com/liangjunmo/goproject/internal/usercenter/mutex"
+	"github.com/liangjunmo/goproject/internal/usercenter/repository"
 	"github.com/liangjunmo/goproject/internal/usercenter/rpc"
-	"github.com/liangjunmo/goproject/internal/usercenter/service/userservice/userserviceimpl"
+	"github.com/liangjunmo/goproject/internal/usercenter/service"
 )
 
 type RPCServerConfig struct {
@@ -30,26 +32,28 @@ func RunRPCServer(config RPCServerConfig) {
 	initLogger()
 
 	db := initDB(config.DB, config.Debug)
-	redisClient := initRedis(config.Redis)
+	defer func() {
+		db, _ := db.DB()
+		_ = db.Close()
+	}()
 
-	userService := userserviceimpl.ProvideService(db, redisClient)
+	redisClient := initRedis(config.Redis)
+	defer redisClient.Close()
+
+	userRepository := repository.NewUserRepository(db)
+
+	mutexProvider := mutex.NewProvider(initRedSync(redisClient))
+
+	userService := service.NewUserService(userRepository, mutexProvider)
 
 	rpcServer := rpc.NewServer(userService)
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(gotraceutil.GRPCUnaryServerInterceptor),
 	)
+	defer grpcServer.Stop()
 
 	usercenterproto.RegisterUserCenterServer(grpcServer, rpcServer)
-
-	defer func() {
-		grpcServer.Stop()
-
-		db, _ := db.DB()
-		_ = db.Close()
-
-		_ = redisClient.Close()
-	}()
 
 	listener, err := net.Listen("tcp", config.Addr)
 	if err != nil {
