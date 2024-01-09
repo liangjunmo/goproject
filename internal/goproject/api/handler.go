@@ -21,14 +21,14 @@ var (
 
 type handler struct {
 	config         Config
-	accountService usecase.AccountUseCase
+	accountUseCase usecase.AccountUseCase
 	userService    service.UserService
 }
 
-func newHandler(config Config, accountService usecase.AccountUseCase, userService service.UserService) *handler {
+func newHandler(config Config, accountUseCase usecase.AccountUseCase, userService service.UserService) *handler {
 	return &handler{
 		config:         config,
-		accountService: accountService,
+		accountUseCase: accountUseCase,
 		userService:    userService,
 	}
 }
@@ -71,9 +71,9 @@ func (handler *handler) buildResponseBody(c *gin.Context, data interface{}, err 
 	return body
 }
 
-func (handler *handler) getUserClaims(c *gin.Context) *model.UserJwtClaims {
+func (handler *handler) getUserClaims(c *gin.Context) *model.UserJWTClaims {
 	user, _ := c.Get(ginCtxUserKey)
-	return user.(*model.UserJwtClaims)
+	return user.(*model.UserJWTClaims)
 }
 
 // Ping
@@ -124,7 +124,7 @@ func (handler *handler) Login(c *gin.Context) {
 		return
 	}
 
-	ticket, failedCount, err := handler.accountService.Login(ctx, usecase.LoginCommand{
+	ticket, failedCount, err := handler.accountUseCase.Login(ctx, usecase.LoginCommand{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -176,7 +176,7 @@ func (handler *handler) CreateToken(c *gin.Context) {
 		return
 	}
 
-	token, err := handler.accountService.CreateToken(ctx, usecase.CreateTokenCommand{Ticket: req.Ticket})
+	token, err := handler.accountUseCase.CreateToken(ctx, usecase.CreateTokenCommand{Ticket: req.Ticket})
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		handler.responseDefault(c, nil, err)
@@ -191,7 +191,7 @@ func (handler *handler) CreateToken(c *gin.Context) {
 func (handler *handler) Authorize(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	claims, err := handler.accountService.Authorize(ctx, usecase.AuthorizeCommand{Token: c.GetHeader("Authorization")})
+	claims, err := handler.accountUseCase.Authorize(ctx, usecase.AuthorizeCommand{Token: c.GetHeader("Authorization")})
 	if err != nil {
 		log.WithContext(ctx).WithError(err).Error(err)
 		c.Abort()

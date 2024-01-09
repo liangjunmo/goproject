@@ -23,7 +23,7 @@ type AccountUseCaseConfig struct {
 type AccountUseCase interface {
 	Login(ctx context.Context, cmd LoginCommand) (ticket string, failedCount uint32, err error)
 	CreateToken(ctx context.Context, cmd CreateTokenCommand) (token string, err error)
-	Authorize(ctx context.Context, cmd AuthorizeCommand) (*model.UserJwtClaims, error)
+	Authorize(ctx context.Context, cmd AuthorizeCommand) (*model.UserJWTClaims, error)
 }
 
 func NewAccountUseCase(config AccountUseCaseConfig, redisManager manager.RedisManager, userService service.UserService) AccountUseCase {
@@ -113,12 +113,12 @@ func (usecase *accountUseCase) CreateToken(ctx context.Context, req CreateTokenC
 		return "", err
 	}
 
-	claims := model.UserJwtClaims{
+	claims := model.UserJWTClaims{
 		UID: user.UID,
 	}
 	claims.StandardClaims.ExpiresAt = time.Now().Add(time.Hour * 24 * 7).Unix()
 
-	token, err = usecase.generateJwtToken(claims)
+	token, err = usecase.generateJWTToken(claims)
 	if err != nil {
 		return "", err
 	}
@@ -130,19 +130,19 @@ type AuthorizeCommand struct {
 	Token string
 }
 
-func (usecase *accountUseCase) Authorize(ctx context.Context, cmd AuthorizeCommand) (*model.UserJwtClaims, error) {
+func (usecase *accountUseCase) Authorize(ctx context.Context, cmd AuthorizeCommand) (*model.UserJWTClaims, error) {
 	if cmd.Token == "" {
 		return nil, codes.AuthorizeFailedInvalidToken
 	}
 
-	jwtClaims, err := usecase.parseJwtToken(cmd.Token, &model.UserJwtClaims{})
+	jwtClaims, err := usecase.parseJWTToken(cmd.Token, &model.UserJWTClaims{})
 	if err != nil {
 		return nil, err
 	}
 
-	claims, ok := jwtClaims.(*model.UserJwtClaims)
+	claims, ok := jwtClaims.(*model.UserJWTClaims)
 	if !ok {
-		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJwtClaims", codes.AuthorizeFailed)
+		return nil, fmt.Errorf("%w: jwt claims can not trans to *UserJWTClaims", codes.AuthorizeFailed)
 	}
 
 	_, err = usecase.userService.Get(ctx, service.GetCommand{UID: claims.UID})
@@ -161,7 +161,7 @@ func (usecase *accountUseCase) generateLoginTicket(uid uint32) string {
 	return base64.URLEncoding.EncodeToString(b)
 }
 
-func (usecase *accountUseCase) generateJwtToken(claims jwt.Claims) (string, error) {
+func (usecase *accountUseCase) generateJWTToken(claims jwt.Claims) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	token, err := jwtToken.SignedString([]byte(usecase.config.JWTKey))
@@ -172,7 +172,7 @@ func (usecase *accountUseCase) generateJwtToken(claims jwt.Claims) (string, erro
 	return token, nil
 }
 
-func (usecase *accountUseCase) parseJwtToken(token string, claims jwt.Claims) (jwt.Claims, error) {
+func (usecase *accountUseCase) parseJWTToken(token string, claims jwt.Claims) (jwt.Claims, error) {
 	jwtToken, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(usecase.config.JWTKey), nil
 	})

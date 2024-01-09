@@ -4,7 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-type UserJwtClaims struct {
+type UserJWTClaims struct {
 	jwt.StandardClaims
 
 	UID uint32

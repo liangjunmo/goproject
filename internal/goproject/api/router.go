@@ -18,8 +18,8 @@ import (
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-func Router(config Config, engine *gin.Engine, accountService usecase.AccountUseCase, userService service.UserService) {
-	handler := newHandler(config, accountService, userService)
+func Router(config Config, engine *gin.Engine, accountUseCase usecase.AccountUseCase, userService service.UserService) {
+	handler := newHandler(config, accountUseCase, userService)
 
 	router(config.Debug, engine, handler)
 }
