@@ -21,21 +21,21 @@ type UserService interface {
 	ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error
 }
 
-func NewUserService(userRepository repository.UserRepository, mutexProvider mutex.Provider) UserService {
-	return newUserService(userRepository, mutexProvider)
+func NewUserService(mutexProvider mutex.MutexProvider, userRepository repository.UserRepository) UserService {
+	return newUserService(mutexProvider, userRepository)
 }
 
 type userService struct {
 	log            *logrus.Entry
+	mutexProvider  mutex.MutexProvider
 	userRepository repository.UserRepository
-	mutexProvider  mutex.Provider
 }
 
-func newUserService(userRepository repository.UserRepository, mutexProvider mutex.Provider) *userService {
+func newUserService(mutexProvider mutex.MutexProvider, userRepository repository.UserRepository) *userService {
 	return &userService{
-		log:            logrus.WithField("tag", "usercenter.service.userservice"),
-		userRepository: userRepository,
+		log:            logrus.WithField("tag", "usercenter.user_service"),
 		mutexProvider:  mutexProvider,
+		userRepository: userRepository,
 	}
 }
 

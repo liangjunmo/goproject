@@ -58,15 +58,15 @@ func RunAPIServer(config APIServerConfig) {
 	}
 	defer userCenterConn.Close()
 
-	userRepository := repository.NewUserRepository(db)
-
-	mutexProvider := mutex.NewProvider(initRedSync(redisClient))
+	mutexProvider := mutex.NewMutexProvider(initRedSync(redisClient))
 
 	redisManager := manager.NewRedisManager(redisClient)
 
+	userRepository := repository.NewUserRepository(db)
+
 	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
 
-	userService := service.NewUserService(userRepository, mutexProvider, userCenterClient)
+	userService := service.NewUserService(mutexProvider, userRepository, userCenterClient)
 
 	accountUseCase := usecase.NewAccountUseCase(
 		usecase.AccountUseCaseConfig{JWTKey: config.JWTKey},

@@ -46,16 +46,16 @@ func RunWorkerServer(config WorkerServerConfig) {
 	}
 	defer userCenterConn.Close()
 
-	userRepository := repository.NewUserRepository(db)
+	mutexProvider := mutex.NewMutexProvider(initRedSync(redisClient))
 
-	mutexProvider := mutex.NewProvider(initRedSync(redisClient))
+	userRepository := repository.NewUserRepository(db)
 
 	userCenterClient := usercenterproto.NewUserCenterClient(userCenterConn)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	wg := &sync.WaitGroup{}
 
-	service.RunUserScheduler(ctx, wg, userRepository, mutexProvider, userCenterClient)
+	service.RunUserScheduler(ctx, wg, mutexProvider, userRepository, userCenterClient)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)

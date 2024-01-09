@@ -27,22 +27,22 @@ type UserService interface {
 	ValidatePassword(ctx context.Context, cmd ValidatePasswordCommand) error
 }
 
-func NewUserService(userRepository repository.UserRepository, mutexProvider mutex.Provider, userCenterClient usercenterproto.UserCenterClient) UserService {
-	return newUserService(userRepository, mutexProvider, userCenterClient)
+func NewUserService(mutexProvider mutex.MutexProvider, userRepository repository.UserRepository, userCenterClient usercenterproto.UserCenterClient) UserService {
+	return newUserService(mutexProvider, userRepository, userCenterClient)
 }
 
 type userService struct {
 	log              *logrus.Entry
+	mutexProvider    mutex.MutexProvider
 	userRepository   repository.UserRepository
-	mutexProvider    mutex.Provider
 	userCenterClient usercenterproto.UserCenterClient
 }
 
-func newUserService(userRepository repository.UserRepository, mutexProvider mutex.Provider, userCenterClient usercenterproto.UserCenterClient) *userService {
+func newUserService(mutexProvider mutex.MutexProvider, userRepository repository.UserRepository, userCenterClient usercenterproto.UserCenterClient) *userService {
 	return &userService{
-		log:              logrus.WithField("tag", "goproject.userservice.service"),
-		userRepository:   userRepository,
+		log:              logrus.WithField("tag", "goproject.user_service"),
 		mutexProvider:    mutexProvider,
+		userRepository:   userRepository,
 		userCenterClient: userCenterClient,
 	}
 }
@@ -270,22 +270,22 @@ func (service *userService) taskToRunExample(ctx context.Context, log *logrus.En
 func RunUserScheduler(
 	ctx context.Context,
 	wg *sync.WaitGroup,
+	mutexProvider mutex.MutexProvider,
 	userRepository repository.UserRepository,
-	mutexProvider mutex.Provider,
 	userCenterClient usercenterproto.UserCenterClient,
 ) {
-	service := newUserService(userRepository, mutexProvider, userCenterClient)
+	service := newUserService(mutexProvider, userRepository, userCenterClient)
 
 	runUserScheduler(ctx, wg, service)
 }
 
-func runUserScheduler(ctx context.Context, wg *sync.WaitGroup, userService *userService) {
+func runUserScheduler(ctx context.Context, wg *sync.WaitGroup, service *userService) {
 	wg.Add(1)
-	go jobToRunExample(ctx, wg, userService)
+	go jobToRunExample(ctx, wg, service)
 }
 
-func jobToRunExample(ctx context.Context, wg *sync.WaitGroup, userService *userService) {
-	log := logrus.WithField("tag", "goproject.userservice.scheduler.jobToRunExample")
+func jobToRunExample(ctx context.Context, wg *sync.WaitGroup, service *userService) {
+	log := logrus.WithField("tag", "goproject.job_to_run_example")
 
 	defer func() {
 		log.Info("quit")
@@ -299,7 +299,7 @@ func jobToRunExample(ctx context.Context, wg *sync.WaitGroup, userService *userS
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			userService.taskToRunExample(gotraceutil.Trace(ctx), log)
+			service.taskToRunExample(gotraceutil.Trace(ctx), log)
 		}
 	}
 }

@@ -40,11 +40,11 @@ func RunRPCServer(config RPCServerConfig) {
 	redisClient := initRedis(config.Redis)
 	defer redisClient.Close()
 
+	mutexProvider := mutex.NewMutexProvider(initRedSync(redisClient))
+
 	userRepository := repository.NewUserRepository(db)
 
-	mutexProvider := mutex.NewProvider(initRedSync(redisClient))
-
-	userService := service.NewUserService(userRepository, mutexProvider)
+	userService := service.NewUserService(mutexProvider, userRepository)
 
 	rpcServer := rpc.NewServer(userService)
 

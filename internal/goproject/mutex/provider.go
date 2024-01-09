@@ -4,24 +4,24 @@ import (
 	"github.com/go-redsync/redsync/v4"
 )
 
-type Provider interface {
+type MutexProvider interface {
 	ProvideCreateUserMutex(uid uint32) Mutex
 }
 
-func NewProvider(sync *redsync.Redsync) Provider {
-	return newProvider(sync)
+func NewMutexProvider(sync *redsync.Redsync) MutexProvider {
+	return newMutexProvider(sync)
 }
 
-type provider struct {
+type mutexProvider struct {
 	sync *redsync.Redsync
 }
 
-func newProvider(sync *redsync.Redsync) *provider {
-	return &provider{
+func newMutexProvider(sync *redsync.Redsync) *mutexProvider {
+	return &mutexProvider{
 		sync: sync,
 	}
 }
 
-func (provider *provider) ProvideCreateUserMutex(uid uint32) Mutex {
+func (provider *mutexProvider) ProvideCreateUserMutex(uid uint32) Mutex {
 	return newCreateUserMutex(provider.sync, uid)
 }

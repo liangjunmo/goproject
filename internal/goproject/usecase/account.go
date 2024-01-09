@@ -39,7 +39,7 @@ type accountUseCase struct {
 
 func newAccountUseCase(config AccountUseCaseConfig, redisManager manager.RedisManager, userService service.UserService) AccountUseCase {
 	return &accountUseCase{
-		log:          logrus.WithField("tag", "goproject.accountservice.service"),
+		log:          logrus.WithField("tag", "goproject.account_use_case"),
 		config:       config,
 		redisManager: redisManager,
 		userService:  userService,

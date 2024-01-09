@@ -1,0 +1,27 @@
+with-expecter: True
+packages:
+  github.com/liangjunmo/goproject/api/usercenterproto:
+    config:
+      all: True
+      outpkg: mockusercenterproto
+      dir: ./mocks/usercenterproto
+  github.com/liangjunmo/goproject/internal/goproject/mutex:
+    config:
+      all: True
+      outpkg: mockmutex
+      dir: ./mocks/goproject/mutex
+  github.com/liangjunmo/goproject/internal/goproject/repository:
+    config:
+      all: True
+      outpkg: mockrepository
+      dir: ./mocks/goproject/repository
+  github.com/liangjunmo/goproject/internal/usercenter/mutex:
+    config:
+      all: True
+      outpkg: mockmutex
+      dir: ./mocks/usercenter/mutex
+  github.com/liangjunmo/goproject/internal/usercenter/repository:
+    config:
+      all: True
+      outpkg: mockrepository
+      dir: ./mocks/usercenter/repository
