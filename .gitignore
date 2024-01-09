@@ -5,3 +5,6 @@
 *.swn
 
 tmp/
+
+cmd/goproject/goproject
+cmd/usercenter/usercenter
