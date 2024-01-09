@@ -1,29 +1,29 @@
 #!/usr/bin/env bash
 
-usercenter-rpc() {
-  DOCKER_REGISTRY=$DOCKER_REGISTRY cd ./cmd/usercenter/ && make k8s-deploy-usercenter-rpc
-}
-
 goproject-nginx() {
-  DOCKER_REGISTRY=$DOCKER_REGISTRY cd ./cmd/goproject/ && make k8s-deploy-goproject-nginx
+  DOCKER_REGISTRY=${DOCKER_REGISTRY} VERSION=${VERSION} cd ./cmd/goproject/ && make k8s-deploy-goproject-nginx
 }
 
 goproject-api() {
-  DOCKER_REGISTRY=$DOCKER_REGISTRY cd ./cmd/goproject/ && make k8s-deploy-goproject-api
+  DOCKER_REGISTRY=${DOCKER_REGISTRY} VERSION=${VERSION} cd ./cmd/goproject/ && make k8s-deploy-goproject-api
 }
 
-echo "deploy $PROJECT"
+usercenter-rpc() {
+  DOCKER_REGISTRY=${DOCKER_REGISTRY} VERSION=${VERSION} cd ./cmd/usercenter/ && make k8s-deploy-usercenter-rpc
+}
 
-case $PROJECT in
-    usercenter-rpc)
-      usercenter-rpc
-      ;;
+echo "deploy ${PROJECT}"
+
+case ${PROJECT} in
     goproject-nginx)
       goproject-nginx
       ;;
     goproject-api)
       goproject-api
       ;;
+    usercenter-rpc)
+      usercenter-rpc
+      ;;
     *)
-      echo "invalid PROJECT $PROJECT"
+      echo "invalid PROJECT ${PROJECT}"
 esac

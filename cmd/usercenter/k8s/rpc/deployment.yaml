@@ -17,7 +17,7 @@ spec:
         goproject: "true"
       containers:
         - name: goproject-usercenter-rpc
-          image: DOCKER_REPOSITORY/goproject-usercenter:latest
+          image: ${DOCKER_REPOSITORY}/goproject-usercenter:${VERSION}
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

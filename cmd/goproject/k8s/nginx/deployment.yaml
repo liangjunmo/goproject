@@ -17,7 +17,7 @@ spec:
         goproject: "true"
       containers:
         - name: goproject-nginx
-          image: DOCKER_REPOSITORY/goproject-nginx:latest
+          image: ${DOCKER_REPOSITORY}/goproject-nginx:${VERSION}
           imagePullPolicy: Always
           ports:
             - containerPort: 80
